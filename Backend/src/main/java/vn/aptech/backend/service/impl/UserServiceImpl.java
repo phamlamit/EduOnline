@@ -25,6 +25,7 @@ import vn.aptech.backend.utils.SecurityUtils;
 import vn.aptech.backend.utils.enums.RoleEnums;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
             AppRole role = roleRepository.findByName(RoleEnums.ROLE_USER.name()).get();
             user.setRole(role);
         }
+        user.setCreatedDate(new Date());
 
         UserDto newUser = mapper.map(repository.save(user), UserDto.class);
         return new ResponseHandler<>().sendSuccess(newUser);
@@ -105,6 +107,7 @@ public class UserServiceImpl implements UserService {
             return response.sendError(StatusErrorEnums.USER_CONFIRM_PASSWORD_DIFFERENT_NEW_PASSWORD);
         }
         user.setPassword(encoder.encode(request.getNewPassword()));
+        user.setUpdatedDate(new Date());
         repository.save(user);
         return response.sendSuccess("Password change success");
     }
@@ -118,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Page<UserDto>> findByUsername(String username, Pageable pageable) {
-        Page<AppUser> appUsers = repository.findAppUsersByUsernameLikeAndDeletedDateIsNull("%"+username+"%", pageable);
+        Page<AppUser> appUsers = repository.findAppUsersByUsernameLikeAndDeletedDateIsNull("%" + username + "%", pageable);
         Page<UserDto> userDtoPage = appUsers.map(appUser -> mapper.map(appUser, UserDto.class));
         return new ResponseHandler<Page<UserDto>>().sendSuccess(userDtoPage);
     }
@@ -135,6 +138,7 @@ public class UserServiceImpl implements UserService {
         appUser.setPhone(request.getPhone());
         appUser.setEmail(request.getEmail());
         appUser.setAvatarImage(request.getAvatarImage());
+        appUser.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(appUser), UserDto.class));
     }
 
@@ -159,6 +163,7 @@ public class UserServiceImpl implements UserService {
         appUser.setPhone(request.getPhone());
         appUser.setEmail(request.getEmail());
         appUser.setAvatarImage(request.getAvatarImage());
+        appUser.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(appUser), UserDto.class));
     }
 
@@ -169,6 +174,17 @@ public class UserServiceImpl implements UserService {
             return new ResponseHandler<UserDto>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
         return new ResponseHandler<UserDto>().sendSuccess(mapper.map(appUser, UserDto.class));
+    }
+
+    @Override
+    public ResponseEntity<?> delete(Long id) {
+        AppUser appUser = repository.findById(id).orElse(null);
+        if (appUser == null) {
+            return new ResponseHandler<UserDto>().sendError(StatusErrorEnums.USER_NOT_FOUND);
+        }
+        appUser.setDeletedDate(new Date());
+        repository.save(appUser);
+        return new ResponseHandler<>().sendSuccess("Deleted");
     }
 
     public AppUser convertSignupRequesttoAppUser(SignupRequest request) {

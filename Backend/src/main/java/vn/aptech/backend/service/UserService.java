@@ -29,4 +29,6 @@ public interface UserService {
     ResponseEntity<?> update(UserAdminUpdateRequest request);
 
     ResponseEntity<UserDto> findById(Long id);
+
+    ResponseEntity<?> delete(Long id);
 }

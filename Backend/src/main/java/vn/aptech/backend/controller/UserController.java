@@ -68,4 +68,10 @@ public class UserController {
     public ResponseEntity<?> update(@RequestBody UserAdminUpdateRequest request) {
         return service.update(request);
     }
+
+    @Admin
+    @DeleteMapping("/admin/user/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        return service.delete(id);
+    }
 }
