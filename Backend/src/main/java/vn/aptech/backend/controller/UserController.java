@@ -32,7 +32,7 @@ public class UserController {
 
     @Admin
     @GetMapping("/user/search")
-    public ResponseEntity<Page<UserDto>> findByUsername(String username,PageDto page) {
+    public ResponseEntity<Page<UserDto>> findByUsername(String username, PageDto page) {
         page = page.builder(page);
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
         return service.findByUsername(username, pageable);
@@ -53,7 +53,7 @@ public class UserController {
 
     @AllRole
     @PostMapping("/user/update")
-    public ResponseEntity<?> update(@RequestBody UserUpdateRequest request) {
+    public ResponseEntity<?> update(@RequestBody @Validated UserUpdateRequest request) {
         return service.update(request);
     }
 
@@ -71,7 +71,7 @@ public class UserController {
 
     @Admin
     @DeleteMapping("/admin/user/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         return service.delete(id);
     }
 }
