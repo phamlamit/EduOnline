@@ -12,9 +12,24 @@ public enum StatusErrorEnums {
     USER_IS_NOT_ENABLED(606,"USER IS NOT ENABLED"),
     USER_NOT_FOUND(607,"User not found"),
 
+    //CatalogError - SubCatalogError
+    CATALOG_NOT_FOUND(608,"Catalog not found"),
+    SUBCATALOG_NOT_FOUND(608,"SubCatalog not found"),
 
-    //700-800 ProductError
-    PRODUCT_700(700, "Product not exists"),
+
+    //700-730 CourseError
+    COURSE_NOT_FOUND(700, "Course not exists"),
+
+
+    //731-760 LessonError
+    LESSON_NOT_FOUND(731,"Lesson not found"),
+
+    LESSON_NOT_IN_COURSE(732,"Lesson not in course"),
+
+    //761-799 LectureError
+    LECTURE_NOT_FOUND(761,"Lecture not in course"),
+    LECTURE_NOT_IN_LESSON(732,"Lecture not in Lesson"),
+
 
     //800-900 Payment Error
     PAYMENT_800(800, "Payment not exists"),
