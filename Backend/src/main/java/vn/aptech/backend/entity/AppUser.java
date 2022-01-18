@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,5 +40,6 @@ public class AppUser extends BaseEntity {
     @JoinColumn(name = "role_id")
     private AppRole role;
 
-
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Payment> payments;
 }

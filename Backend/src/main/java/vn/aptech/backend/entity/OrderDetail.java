@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,15 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "Lesson")
-public class Lesson extends BaseEntity {
-
-    private String title;
-
+@Table(name = "OrderDetail")
+public class OrderDetail extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "lesson")
-    private List<Lecture> lectures;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    private Orders order;
 }
