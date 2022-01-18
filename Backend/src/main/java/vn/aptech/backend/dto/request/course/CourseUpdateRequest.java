@@ -11,21 +11,45 @@ import javax.validation.constraints.Pattern;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotNull
-@NotBlank
 public class CourseUpdateRequest {
+    @NotNull
+    @NotBlank
     private Long id;
+    @NotNull
+    @NotBlank
     private String title;
+    @NotNull
+    @NotBlank
     private String shortDescription;
+    @NotNull
+    @NotBlank
     private String description;
+    @NotNull
+    @NotBlank
     private String requirement;
+    @NotNull
+    @NotBlank
     private String whoThisCourseIsFor;
+    @NotNull
+    @NotBlank
     private String whatYouWillLearn;
+    @NotNull
+    @NotBlank
     private int language;
+    @NotNull
+    @NotBlank
     private int status;
+    @NotNull
+    @NotBlank
     @Pattern(regexp = "[0-9]")
     private Float price;
+    @NotNull
+    @NotBlank
     private String videoDuration;
+    @NotNull
+    @NotBlank
     private String urlVideoDescription;
+    @NotNull
+    @NotBlank
     private String imageVideoDescription;
 }

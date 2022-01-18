@@ -10,13 +10,23 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotNull
-@NotBlank
 public class LectureCreateRequest {
+    @NotNull
+    @NotBlank
     private Long lessonId;
+    @NotNull
+    @NotBlank
     private String title;
+    @NotNull
+    @NotBlank
     private Integer sort;
+    @NotNull
+    @NotBlank
     private String videoUrl;
+    @NotNull
+    @NotBlank
     private String videoDuration;
+    @NotNull
+    @NotBlank
     private boolean preview;
 }

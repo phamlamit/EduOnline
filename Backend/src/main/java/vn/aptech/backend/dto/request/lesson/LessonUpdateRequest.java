@@ -10,10 +10,14 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotNull
-@NotBlank
 public class LessonUpdateRequest {
+    @NotNull
+    @NotBlank
     private Long id;
+    @NotNull
+    @NotBlank
     private Long courseId;
+    @NotNull
+    @NotBlank
     private String title;
 }

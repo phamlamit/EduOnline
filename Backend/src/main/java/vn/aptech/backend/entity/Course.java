@@ -21,6 +21,7 @@ import java.util.List;
 @Table(name = "Course")
 public class Course extends BaseEntity {
     private String title;
+    @Column(name = "short_description")
     private String shortDescription;
     private String description;
     private String requirement;

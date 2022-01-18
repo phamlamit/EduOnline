@@ -2,6 +2,7 @@ package vn.aptech.backend.service.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import vn.aptech.backend.dto.UserDto;
 import vn.aptech.backend.dto.request.SignupRequest;
 import vn.aptech.backend.dto.request.user.UserAdminUpdateRequest;
 import vn.aptech.backend.dto.request.user.UserChangePasswordRequest;
+import vn.aptech.backend.dto.request.user.UserCreateAdminRequest;
 import vn.aptech.backend.dto.request.user.UserUpdateRequest;
 import vn.aptech.backend.dto.response.user.UserInformationResponse;
 import vn.aptech.backend.entity.AppRole;
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder encoder;
     @Autowired
     private ModelMapper mapper;
+    @Value("$defaultAvatar")
+    private String defaultAvatar;
 
 
     @Override
@@ -54,7 +58,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseEntity<?> create(SignupRequest request) {
-        if (request.getPassword().equals(request.getConfirmPassword())) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_PASSWORD_DIFFERENT_NEW_PASSWORD);
         }
         if (repository.existsByUsername(request.getUsername())) {
@@ -63,22 +67,16 @@ public class UserServiceImpl implements UserService {
         if (repository.existsByEmail(request.getEmail())) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_EMAIL_IS_ALREADY_USE);
         }
+        request.setPassword(encoder.encode(request.getPassword()));
 
-        AppUser user = this.convertSignupRequesttoAppUser(request);
+        AppUser user = mapper.map(request, AppUser.class);
 
-        if (SecurityUtils.getPrincipal().getRole().equals(RoleEnums.ROLE_ADMIN.name())) {
-            if (StringUtils.isEmpty(request.getRole())) {
-                AppRole role = roleRepository.findByName(request.getRole()).orElse(null);
-                if (role == null) {
-                    return new ResponseHandler<>().sendError(StatusErrorEnums.USER_ROLE_NOT_FOUND);
-                } else {
-                    user.setRole(role);
-                }
-            }
-        } else {
-            AppRole role = roleRepository.findByName(RoleEnums.ROLE_USER.name()).get();
-            user.setRole(role);
-        }
+        AppRole appRole = roleRepository.findByName(RoleEnums.ROLE_USER.name()).get();
+
+        user.setRole(appRole);
+
+        user.setEnabled(true);
+
         user.setCreatedDate(new Date());
 
         UserDto newUser = mapper.map(repository.save(user), UserDto.class);
@@ -87,9 +85,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserInformationResponse> getUserInformation() {
-        AppUser user = repository.findByUsername(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser user = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
         if (user == null) {
             return new ResponseHandler<UserInformationResponse>().sendError(StatusErrorEnums.USER_NOT_FOUND);
+        }
+        if (StringUtils.isEmpty(user.getAvatarImage())) {
+            user.setAvatarImage(defaultAvatar);
         }
         UserInformationResponse userInformationResponse = mapper.map(user, UserInformationResponse.class);
         return new ResponseHandler<UserInformationResponse>().sendSuccess(userInformationResponse);
@@ -99,7 +100,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> changePassword(UserChangePasswordRequest request) {
         ResponseHandler<List<UserDto>> response = new ResponseHandler<>();
-        AppUser user = repository.findByUsername(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser user = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
         if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
             return response.sendError(StatusErrorEnums.USER_OLD_PASSWORD_IS_WRONG);
         }
@@ -115,7 +116,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Page<UserDto>> fillAll(Pageable pageable) {
         Page<AppUser> appUsers = repository.findAppUsersByDeletedDateIsNull(pageable);
-        Page<UserDto> userDtoPage = appUsers.map(appUser -> mapper.map(appUser, UserDto.class));
+        Page<UserDto> userDtoPage = appUsers.map(appUser -> {
+            if (StringUtils.isEmpty(appUser.getAvatarImage())) {
+                appUser.setAvatarImage(defaultAvatar);
+            }
+            return mapper.map(appUser, UserDto.class);
+        });
         return new ResponseHandler<Page<UserDto>>().sendSuccess(userDtoPage);
     }
 
@@ -129,7 +135,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseEntity<?> update(UserUpdateRequest request) {
-        AppUser appUser = repository.findByUsername(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser appUser = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
         if (appUser == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
@@ -142,9 +148,10 @@ public class UserServiceImpl implements UserService {
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(appUser), UserDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> update(UserAdminUpdateRequest request) {
-        AppUser appUser = repository.findById(request.getId()).orElse(null);
+        AppUser appUser = repository.findByIdAndDeletedDateIsNull(request.getId()).orElse(null);
         if (appUser == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
@@ -169,16 +176,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> findById(Long id) {
-        AppUser appUser = repository.findById(id).orElse(null);
+        AppUser appUser = repository.findByIdAndDeletedDateIsNull(id).orElse(null);
         if (appUser == null) {
             return new ResponseHandler<UserDto>().sendError(StatusErrorEnums.USER_NOT_FOUND);
+        }
+        if (StringUtils.isEmpty(appUser.getAvatarImage())) {
+            appUser.setAvatarImage(defaultAvatar);
         }
         return new ResponseHandler<UserDto>().sendSuccess(mapper.map(appUser, UserDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> delete(Long id) {
-        AppUser appUser = repository.findById(id).orElse(null);
+        AppUser appUser = repository.findByIdAndDeletedDateIsNull(id).orElse(null);
         if (appUser == null) {
             return new ResponseHandler<UserDto>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
@@ -187,12 +198,32 @@ public class UserServiceImpl implements UserService {
         return new ResponseHandler<>().sendSuccess("Deleted");
     }
 
-    public AppUser convertSignupRequesttoAppUser(SignupRequest request) {
-        AppUser result = new AppUser();
-        result.setUsername(request.getUsername());
-        result.setPassword(encoder.encode(request.getPassword()));
-        result.setAddress(request.getAddress());
-        result.setPhone(request.getPhone());
-        return result;
+    @Transactional
+    @Override
+    public ResponseEntity<?> create(UserCreateAdminRequest request) {
+        if (repository.existsByUsername(request.getUsername())) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.USER_USERNAME_IS_ALREADY_TAKEN);
+        }
+        if (repository.existsByEmail(request.getEmail())) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.USER_EMAIL_IS_ALREADY_USE);
+        }
+        request.setPassword(encoder.encode(request.getPassword()));
+
+        AppUser user = mapper.map(request, AppUser.class);
+
+        AppRole appRole = roleRepository.findByName(request.getRole()).orElse(null);
+
+        if (appRole == null) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.USER_ROLE_NOT_FOUND);
+        }
+
+        user.setRole(appRole);
+
+        user.setEnabled(true);
+
+        user.setCreatedDate(new Date());
+
+        UserDto newUser = mapper.map(repository.save(user), UserDto.class);
+        return new ResponseHandler<>().sendSuccess(newUser);
     }
 }

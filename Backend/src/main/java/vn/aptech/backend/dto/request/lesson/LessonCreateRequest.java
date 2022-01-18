@@ -10,9 +10,11 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotNull
-@NotBlank
 public class LessonCreateRequest {
+    @NotNull
+    @NotBlank
     private Long courseId;
+    @NotNull
+    @NotBlank
     private String title;
 }

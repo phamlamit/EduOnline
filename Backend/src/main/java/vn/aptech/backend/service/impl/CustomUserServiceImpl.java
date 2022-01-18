@@ -22,7 +22,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser appUser = repository.findByUsername(username)
+        AppUser appUser = repository.findByUsernameAndDeletedDateIsNull(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (appUser.getRole() != null) {

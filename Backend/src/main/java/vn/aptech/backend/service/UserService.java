@@ -7,6 +7,7 @@ import vn.aptech.backend.dto.UserDto;
 import vn.aptech.backend.dto.request.SignupRequest;
 import vn.aptech.backend.dto.request.user.UserAdminUpdateRequest;
 import vn.aptech.backend.dto.request.user.UserChangePasswordRequest;
+import vn.aptech.backend.dto.request.user.UserCreateAdminRequest;
 import vn.aptech.backend.dto.request.user.UserUpdateRequest;
 
 public interface UserService {
@@ -31,4 +32,6 @@ public interface UserService {
     ResponseEntity<UserDto> findById(Long id);
 
     ResponseEntity<?> delete(Long id);
+
+    ResponseEntity<?> create(UserCreateAdminRequest request);
 }

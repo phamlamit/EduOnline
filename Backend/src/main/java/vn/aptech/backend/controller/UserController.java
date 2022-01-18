@@ -13,6 +13,7 @@ import vn.aptech.backend.dto.PageDto;
 import vn.aptech.backend.dto.UserDto;
 import vn.aptech.backend.dto.request.user.UserAdminUpdateRequest;
 import vn.aptech.backend.dto.request.user.UserChangePasswordRequest;
+import vn.aptech.backend.dto.request.user.UserCreateAdminRequest;
 import vn.aptech.backend.dto.request.user.UserUpdateRequest;
 import vn.aptech.backend.service.UserService;
 
@@ -49,6 +50,12 @@ public class UserController {
     @AllRole
     public ResponseEntity<?> getUserInformation() {
         return service.getUserInformation();
+    }
+
+    @Admin
+    @PostMapping("/user/create")
+    public ResponseEntity<?> create(@RequestBody @Validated UserCreateAdminRequest request){
+        return service.create(request);
     }
 
     @AllRole

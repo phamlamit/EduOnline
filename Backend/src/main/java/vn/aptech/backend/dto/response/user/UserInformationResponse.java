@@ -17,5 +17,6 @@ public class UserInformationResponse implements Serializable {
     private String address;
     private String phone;
     private String email;
+    private String avatarImage;
     private boolean enabled;
 }

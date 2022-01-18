@@ -43,8 +43,7 @@ public class CatalogController {
         return service.findByCatalogName(name);
     }
 
-    @Admin
-    @GetMapping("catalog/{id}")
+    @GetMapping("/catalog/{id}")
     public ResponseEntity<CatalogDto> getCatalogById(@PathVariable("id") Long id) {
         return service.findById(id);
     }

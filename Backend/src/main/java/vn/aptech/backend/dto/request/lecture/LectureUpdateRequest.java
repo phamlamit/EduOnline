@@ -5,18 +5,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotBlank
-@NotBlank
 public class LectureUpdateRequest {
+    @NotNull
+    @NotBlank
     private Long id;
+    @NotNull
+    @NotBlank
     private Long lessonId;
+    @NotNull
+    @NotBlank
     private String title;
+    @NotNull
+    @NotBlank
     private Integer sort;
+    @NotNull
+    @NotBlank
     private String videoUrl;
+    @NotNull
+    @NotBlank
     private String videoDuration;
+    @NotNull
+    @NotBlank
     private boolean preview;
 }

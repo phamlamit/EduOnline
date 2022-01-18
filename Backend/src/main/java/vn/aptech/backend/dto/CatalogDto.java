@@ -14,5 +14,5 @@ public class CatalogDto {
     private Long id;
     private String name;
     private String description;
-    private List<SubCatalog> subCatalogs;
+    private List<SubCatalogDto> subCatalogs;
 }
