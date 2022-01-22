@@ -18,4 +18,6 @@ public interface CourseService {
     ResponseEntity<?> update(CourseUpdateRequest request);
 
     ResponseEntity<CourseDto> findById(Long id);
+
+    ResponseEntity<?> getLanguages();
 }

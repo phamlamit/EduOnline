@@ -1,8 +1,12 @@
 package vn.aptech.backend.dto.request.course;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.aptech.backend.utils.converter.LanguageConverter;
+import vn.aptech.backend.utils.enums.LanguageEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +16,8 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseCreateRequest {
+    @NotNull
+    private Long subCatalogId;
     @NotNull
     @NotBlank
     private String title;
@@ -31,14 +37,8 @@ public class CourseCreateRequest {
     @NotBlank
     private String whatYouWillLearn;
     @NotNull
-    @NotBlank
-    private int language;
+    private LanguageEnum language;
     @NotNull
-    @NotBlank
-    private int status;
-    @Pattern(regexp = "[0-9]")
-    @NotNull
-    @NotBlank
     private Float price;
     @NotNull
     @NotBlank

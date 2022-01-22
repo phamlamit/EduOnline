@@ -18,6 +18,8 @@ public class UserAdminUpdateRequest {
     @NotNull
     @NotBlank
     private String email;
+    @NotNull
+    @NotBlank
     private String fullname;
     private String avatarImage;
     private String phone;

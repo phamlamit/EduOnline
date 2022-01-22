@@ -6,18 +6,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.aptech.backend.dto.CourseDto;
 import vn.aptech.backend.dto.ResponseHandler;
-import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
+import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.entity.Course;
+import vn.aptech.backend.entity.SubCatalog;
 import vn.aptech.backend.repository.CourseRepository;
 import vn.aptech.backend.repository.LessonRepository;
+import vn.aptech.backend.repository.SubCatalogRepository;
 import vn.aptech.backend.service.CourseService;
 import vn.aptech.backend.service.LectureService;
+import vn.aptech.backend.utils.enums.LanguageEnum;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -32,19 +38,28 @@ public class CourseServiceImpl implements CourseService {
     private LectureService lectureService;
 
     @Autowired
+    private SubCatalogRepository subCatalogRepository;
+
+    @Autowired
     private ModelMapper mapper;
 
+    @Transactional
     @Override
     public ResponseEntity<?> create(CourseCreateRequest request) {
+        SubCatalog subCatalog = subCatalogRepository.findById(request.getSubCatalogId()).orElse(null);
+        if(subCatalog == null){
+            return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
+        }
         Course course = this.convertSignupRequesttoAppCourse(request);
+        course.setSubCatalog(subCatalog);
         CourseDto newCourse = mapper.map(repository.save(course), CourseDto.class);
         return new ResponseHandler<>().sendSuccess(newCourse);
     }
 
     @Override
     public ResponseEntity<Page<CourseDto>> fillAll(Pageable pageable) {
-        Page<Course> course = repository.findCourseByDeletedDateIsNull(pageable);
-        Page<CourseDto> courseDtoPage = course.map(appCourse -> mapper.map(course, CourseDto.class));
+        Page<Course> courses = repository.findCourseByDeletedDateIsNull(pageable);
+        Page<CourseDto> courseDtoPage = courses.map(appCourse -> mapper.map(appCourse, CourseDto.class));
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
@@ -55,18 +70,24 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> update(CourseUpdateRequest request) {
+        SubCatalog subCatalog = subCatalogRepository.findById(request.getSubCatalogId()).orElse(null);
+        if(subCatalog == null){
+            return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
+        }
         Course course = repository.findById(request.getId()).orElse(null);
         if (course == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
         course.setTitle(request.getTitle());
+        course.setSubCatalog(subCatalog);
         course.setDescription(request.getDescription());
         course.setRequirement(request.getRequirement());
         course.setWhoThisCourseIsFor(request.getWhoThisCourseIsFor());
         course.setWhatYouWillLearn(request.getWhatYouWillLearn());
-        course.setStatus(request.getStatus());
+        course.setActivate(request.isActivate());
         course.setLanguage(request.getLanguage());
         course.setPrice(request.getPrice());
         course.setVideoDuration(request.getVideoDuration());
@@ -86,19 +107,19 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
+    @Override
+    public ResponseEntity<?> getLanguages() {
+        Map<String, String> result = new LinkedHashMap<>();
+        for (LanguageEnum languageEnum : LanguageEnum.values()) {
+            result.put(languageEnum.name(), languageEnum.getValue());
+        }
+        return new ResponseHandler<>().sendSuccess(result);
+    }
+
     public Course convertSignupRequesttoAppCourse(CourseCreateRequest request) {
-        Course result = new Course();
-        result.setTitle(request.getTitle());
-        result.setDescription(request.getDescription());
-        result.setRequirement(request.getRequirement());
-        result.setWhoThisCourseIsFor(request.getWhoThisCourseIsFor());
-        result.setWhatYouWillLearn(result.getWhatYouWillLearn());
-        result.setStatus(request.getStatus());
-        result.setPrice(request.getPrice());
-        result.setVideoDuration(request.getVideoDuration());
-        result.setLanguage(request.getLanguage());
-        result.setUrlVideoDescription(request.getUrlVideoDescription());
-        result.setImageVideoDescription(request.getImageVideoDescription());
+        Course result = mapper.map(request,Course.class);
+        result.setActivate(false);
+        result.setCreatedDate(new Date());
         return result;
     }
 }

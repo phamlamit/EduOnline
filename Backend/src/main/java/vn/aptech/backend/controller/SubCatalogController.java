@@ -29,8 +29,8 @@ public class SubCatalogController {
     }
 
     @Admin
-    @PostMapping("/admin/subCatalog/update")
-    public ResponseEntity<?> update(@RequestBody SubCatalogUpdateRequest request) {
+    @PostMapping("/subCatalog/update")
+    public ResponseEntity<?> update(@Validated @RequestBody SubCatalogUpdateRequest request) {
         return service.update(request);
     }
 

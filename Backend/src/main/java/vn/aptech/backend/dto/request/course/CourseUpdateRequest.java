@@ -3,6 +3,7 @@ package vn.aptech.backend.dto.request.course;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.aptech.backend.utils.enums.LanguageEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,8 +14,9 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class CourseUpdateRequest {
     @NotNull
-    @NotBlank
     private Long id;
+    @NotNull
+    private Long subCatalogId;
     @NotNull
     @NotBlank
     private String title;
@@ -34,14 +36,11 @@ public class CourseUpdateRequest {
     @NotBlank
     private String whatYouWillLearn;
     @NotNull
-    @NotBlank
-    private int language;
+    private LanguageEnum language;
     @NotNull
     @NotBlank
-    private int status;
+    private boolean activate;
     @NotNull
-    @NotBlank
-    @Pattern(regexp = "[0-9]")
     private Float price;
     @NotNull
     @NotBlank

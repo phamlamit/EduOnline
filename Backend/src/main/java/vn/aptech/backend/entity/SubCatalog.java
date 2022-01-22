@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,5 +24,8 @@ public class SubCatalog extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "catalog_id")
     private Catalog catalog;
+
+    @OneToMany(mappedBy = "subCatalog",fetch = FetchType.LAZY)
+    private List<Course> courses;
 
 }

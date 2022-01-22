@@ -41,7 +41,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder encoder;
     @Autowired
     private ModelMapper mapper;
-    @Value("$defaultAvatar")
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Value("${default.avatar}")
     private String defaultAvatar;
 
 
@@ -85,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserInformationResponse> getUserInformation() {
-        AppUser user = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser user = securityUtils.getPrincipal();
         if (user == null) {
             return new ResponseHandler<UserInformationResponse>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
@@ -100,7 +102,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> changePassword(UserChangePasswordRequest request) {
         ResponseHandler<List<UserDto>> response = new ResponseHandler<>();
-        AppUser user = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser user = securityUtils.getPrincipal();
         if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
             return response.sendError(StatusErrorEnums.USER_OLD_PASSWORD_IS_WRONG);
         }
@@ -135,7 +137,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public ResponseEntity<?> update(UserUpdateRequest request) {
-        AppUser appUser = repository.findByUsernameAndDeletedDateIsNull(SecurityUtils.getPrincipal().getUsername()).orElse(null);
+        AppUser appUser = securityUtils.getPrincipal();
         if (appUser == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }

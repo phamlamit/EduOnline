@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class CatalogUpdateRequest {
     @NotNull
-    @NotBlank
     private Long id;
     @NotNull
     @NotBlank

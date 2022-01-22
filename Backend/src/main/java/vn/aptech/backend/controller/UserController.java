@@ -46,8 +46,8 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/user-information")
     @AllRole
+    @GetMapping("/user/user-information")
     public ResponseEntity<?> getUserInformation() {
         return service.getUserInformation();
     }
@@ -72,7 +72,7 @@ public class UserController {
 
     @Admin
     @PostMapping("/admin/user/update")
-    public ResponseEntity<?> update(@RequestBody UserAdminUpdateRequest request) {
+    public ResponseEntity<?> update(@Validated @RequestBody UserAdminUpdateRequest request) {
         return service.update(request);
     }
 

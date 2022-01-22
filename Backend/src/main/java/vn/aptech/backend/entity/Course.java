@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import vn.aptech.backend.utils.enums.LanguageEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Getter
@@ -29,17 +27,20 @@ public class Course extends BaseEntity {
     private String whoThisCourseIsFor;
     @Column(name = "what_you_will_learn")
     private String whatYouWillLearn;
-    private int status;
+    private boolean activate;
     private Float price;
     @Column(name = "video_duration")
     private String videoDuration;
-    private int language;
+    @Enumerated(EnumType.STRING)
+    private LanguageEnum language;
     @Column(name = "url_video_description")
     private String urlVideoDescription;
     @Column(name = "image_video_description")
     private String imageVideoDescription;
-    @Column(name = "subcatalog_id")
-    private Integer subcatalog_id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcatalog_id")
+    private SubCatalog subCatalog;
 
     @OneToMany(mappedBy = "course")
     private List<Lesson> lessons;

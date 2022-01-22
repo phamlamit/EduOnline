@@ -32,8 +32,8 @@ public class CatalogController {
     }
 
     @Admin
-    @PostMapping("/admin/catalog/update")
-    public ResponseEntity<?> update(@RequestBody CatalogUpdateRequest request) {
+    @PostMapping("/catalog/update")
+    public ResponseEntity<?> update(@Validated @RequestBody CatalogUpdateRequest request) {
         return service.update(request);
     }
 
