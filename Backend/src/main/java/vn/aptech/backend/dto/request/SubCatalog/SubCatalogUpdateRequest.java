@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 public class SubCatalogUpdateRequest {
     @NotNull
     private Long id;
-    @NotNull
     private Long catalogId;
     @NotNull
     @NotBlank

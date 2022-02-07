@@ -63,11 +63,13 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         if (subCatalogs == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
-        Catalog catalog = catalogRepository.findById(request.getCatalogId()).orElse(null);
-        if (catalog == null) {
-            return new ResponseHandler<>().sendError(StatusErrorEnums.CATALOG_NOT_FOUND);
+        if(request.getCatalogId()!=null){
+            Catalog catalog = catalogRepository.findById(request.getCatalogId()).orElse(null);
+            if (catalog == null) {
+                return new ResponseHandler<>().sendError(StatusErrorEnums.CATALOG_NOT_FOUND);
+            }
+            subCatalogs.setCatalog(catalog);
         }
-        subCatalogs.setCatalog(catalog);
         subCatalogs.setName(request.getName());
         subCatalogs.setDescription(request.getDescription());
         subCatalogs.setUpdatedDate(new Date());
