@@ -1,16 +1,14 @@
 package vn.aptech.backend.dto.request.course;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.aptech.backend.utils.converter.LanguageConverter;
+import vn.aptech.backend.dto.request.lesson.LessonCreateRequest;
 import vn.aptech.backend.utils.enums.LanguageEnum;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -49,4 +47,6 @@ public class CourseCreateRequest {
     @NotNull
     @NotBlank
     private String imageVideoDescription;
+
+    List<LessonCourseCreateRequest> lessons;
 }

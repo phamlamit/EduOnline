@@ -6,8 +6,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.aptech.backend.annotation.Admin;
 import vn.aptech.backend.dto.SubCatalogDto;
-import vn.aptech.backend.dto.request.SubCatalog.SubCatalogCreateRequest;
-import vn.aptech.backend.dto.request.SubCatalog.SubCatalogUpdateRequest;
+import vn.aptech.backend.dto.request.subcatalog.SubCatalogCreateRequest;
+import vn.aptech.backend.dto.request.subcatalog.SubCatalogUpdateRequest;
 import vn.aptech.backend.service.SubCatalogService;
 
 @RestController

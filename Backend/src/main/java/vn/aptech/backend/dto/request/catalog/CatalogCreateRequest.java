@@ -1,4 +1,4 @@
-package vn.aptech.backend.dto.request.Catalog;
+package vn.aptech.backend.dto.request.catalog;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

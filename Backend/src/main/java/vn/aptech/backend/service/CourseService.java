@@ -20,4 +20,6 @@ public interface CourseService {
     ResponseEntity<CourseDto> findById(Long id);
 
     ResponseEntity<?> getLanguages();
+
+    ResponseEntity<?> delete(Long id);
 }

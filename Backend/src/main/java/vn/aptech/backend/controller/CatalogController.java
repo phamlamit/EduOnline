@@ -1,17 +1,13 @@
 package vn.aptech.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.aptech.backend.annotation.Admin;
 import vn.aptech.backend.dto.CatalogDto;
-import vn.aptech.backend.dto.PageDto;
-import vn.aptech.backend.dto.request.Catalog.CatalogUpdateRequest;
-import vn.aptech.backend.dto.request.Catalog.CatalogCreateRequest;
+import vn.aptech.backend.dto.request.catalog.CatalogUpdateRequest;
+import vn.aptech.backend.dto.request.catalog.CatalogCreateRequest;
 import vn.aptech.backend.service.CatalogService;
 
 @RestController

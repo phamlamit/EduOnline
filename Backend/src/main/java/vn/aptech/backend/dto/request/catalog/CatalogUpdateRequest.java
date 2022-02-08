@@ -1,4 +1,4 @@
-package vn.aptech.backend.dto.request.SubCatalog;
+package vn.aptech.backend.dto.request.catalog;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,10 +10,9 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubCatalogUpdateRequest {
+public class CatalogUpdateRequest {
     @NotNull
     private Long id;
-    private Long catalogId;
     @NotNull
     @NotBlank
     private String name;

@@ -1,4 +1,4 @@
-package vn.aptech.backend.dto.request.lecture;
+package vn.aptech.backend.dto.request.course;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +10,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LectureCreateRequest {
-    @NotNull
-    @NotBlank
-    private Long lessonId;
-
+public class LectureCourseCreateRequest {
     @NotNull
     @NotBlank
     private String title;

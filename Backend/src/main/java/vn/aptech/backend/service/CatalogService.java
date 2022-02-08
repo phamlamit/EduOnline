@@ -2,8 +2,8 @@ package vn.aptech.backend.service;
 
 import org.springframework.http.ResponseEntity;
 import vn.aptech.backend.dto.CatalogDto;
-import vn.aptech.backend.dto.request.Catalog.CatalogUpdateRequest;
-import vn.aptech.backend.dto.request.Catalog.CatalogCreateRequest;
+import vn.aptech.backend.dto.request.catalog.CatalogUpdateRequest;
+import vn.aptech.backend.dto.request.catalog.CatalogCreateRequest;
 
 public interface CatalogService {
     ResponseEntity<?> create(CatalogCreateRequest request);

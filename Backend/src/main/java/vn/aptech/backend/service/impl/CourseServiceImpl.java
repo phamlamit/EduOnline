@@ -12,12 +12,14 @@ import vn.aptech.backend.dto.ResponseHandler;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.entity.Course;
+import vn.aptech.backend.entity.Lecture;
+import vn.aptech.backend.entity.Lesson;
 import vn.aptech.backend.entity.SubCatalog;
 import vn.aptech.backend.repository.CourseRepository;
+import vn.aptech.backend.repository.LectureRepository;
 import vn.aptech.backend.repository.LessonRepository;
 import vn.aptech.backend.repository.SubCatalogRepository;
 import vn.aptech.backend.service.CourseService;
-import vn.aptech.backend.service.LectureService;
 import vn.aptech.backend.utils.enums.LanguageEnum;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
@@ -35,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private LessonRepository lessonRepository;
 
     @Autowired
-    private LectureService lectureService;
+    private LectureRepository lectureRepository;
 
     @Autowired
     private SubCatalogRepository subCatalogRepository;
@@ -50,10 +52,23 @@ public class CourseServiceImpl implements CourseService {
         if(subCatalog == null){
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
-        Course course = this.convertSignupRequesttoAppCourse(request);
+        Course course = this.convertSignupRequestToAppCourse(request);
+
         course.setSubCatalog(subCatalog);
-        CourseDto newCourse = mapper.map(repository.save(course), CourseDto.class);
-        return new ResponseHandler<>().sendSuccess(newCourse);
+        Course newCourse = repository.save(course);
+        request.getLessons().forEach(lessonCreateRequest->{
+            Lesson lesson = mapper.map(lessonCreateRequest,Lesson.class);
+            lesson.setCourse(course);
+            lesson.setCreatedDate(new Date());
+            lessonRepository.save(lesson);
+            lessonCreateRequest.getLectures().forEach(lectureCreateRequest -> {
+                Lecture lecture = mapper.map(lectureCreateRequest, Lecture.class);
+                lecture.setLesson(lesson);
+                lecture.setCreatedDate(new Date());
+                lectureRepository.save(lecture);
+            });
+        });
+        return new ResponseHandler<>().sendSuccess(mapper.map(newCourse, CourseDto.class));
     }
 
     @Override
@@ -77,7 +92,7 @@ public class CourseServiceImpl implements CourseService {
         if(subCatalog == null){
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
-        Course course = repository.findById(request.getId()).orElse(null);
+        Course course = repository.findByIdAndDeletedDateIsNull(request.getId()).orElse(null);
         if (course == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
@@ -99,9 +114,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public ResponseEntity<CourseDto> findById(Long id) {
-        Course course = repository.findById(id).orElse(null);
+        Course course = repository.findByIdAndDeletedDateIsNull(id).orElse(null);
         if (course == null) {
-            return new ResponseHandler<CourseDto>().sendError(StatusErrorEnums.USER_NOT_FOUND);
+            return new ResponseHandler<CourseDto>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
         return new ResponseHandler<CourseDto>().sendSuccess(mapper.map(course, CourseDto.class));
 
@@ -116,7 +131,25 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseHandler<>().sendSuccess(result);
     }
 
-    public Course convertSignupRequesttoAppCourse(CourseCreateRequest request) {
+    @Transactional
+    @Override
+    public ResponseEntity<?> delete(Long id) {
+        Course course = repository.findByIdAndDeletedDateIsNull(id).orElse(null);
+        if (course == null) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
+        }
+        course.setDeletedDate(new Date());
+        course.getLessons().forEach(lesson -> {
+            lesson.setDeletedDate(new Date());
+            lesson.getLectures().forEach(lecture -> lecture.setDeletedDate(new Date()));
+
+        });
+        repository.save(course);
+        return new ResponseHandler<>().sendSuccess("Deleted success");
+    }
+
+
+    public Course convertSignupRequestToAppCourse(CourseCreateRequest request) {
         Course result = mapper.map(request,Course.class);
         result.setActivate(false);
         result.setCreatedDate(new Date());

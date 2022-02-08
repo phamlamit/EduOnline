@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.aptech.backend.dto.LectureDto;
 import vn.aptech.backend.dto.ResponseHandler;
 import vn.aptech.backend.dto.request.lecture.LectureCreateRequest;
@@ -38,6 +39,7 @@ public class LectureServiceImpl implements LectureService {
         return new ResponseHandler<>().sendSuccess(mapper.map(lecture, LectureDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> create(LectureCreateRequest request) {
         Lesson lesson = lessonRepository.findByIdAndDeletedDateIsNull(request.getLessonId()).orElse(null);
@@ -50,6 +52,7 @@ public class LectureServiceImpl implements LectureService {
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lecture), LectureDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> update(LectureUpdateRequest request) {
         Lecture lecture = repository.findByIdAndDeletedDateIsNull(request.getId()).orElse(null);
@@ -72,6 +75,7 @@ public class LectureServiceImpl implements LectureService {
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lecture), LectureDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> delete(long id) {
         Lecture lecture = repository.findByIdAndDeletedDateIsNull(id).orElse(null);

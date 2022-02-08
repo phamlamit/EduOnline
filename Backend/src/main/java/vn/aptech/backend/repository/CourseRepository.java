@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    Optional<Course> findCourseByTitle(String name);
+    Optional<Course> findByIdAndDeletedDateIsNull(Long id);
 
     Page<Course> findCourseByDeletedDateIsNull(Pageable pageable);
 

@@ -88,6 +88,7 @@ public class LessonServiceImpl implements LessonService {
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lesson), LessonDto.class));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> delete(long id) {
         Lesson lesson = repository.findByIdAndDeletedDateIsNull(id).orElse(null);

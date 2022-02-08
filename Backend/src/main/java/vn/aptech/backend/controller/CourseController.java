@@ -57,12 +57,18 @@ public class CourseController {
     }
 
     @GetMapping("course/{id}")
-    public ResponseEntity<CourseDto> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<CourseDto> getById(@PathVariable("id") Long id) {
         return service.findById(id);
     }
 
-    @GetMapping("/course/{courseId}/lessons")
-    public ResponseEntity<?> getLessonsByCourseId(@PathVariable("courseId") int courseId) {
+    @GetMapping("/course/{id}/lessons")
+    public ResponseEntity<?> getLessonsByCourseId(@PathVariable("id") int courseId) {
         return lessonService.findByCourseId(courseId);
+    }
+
+    @Admin
+    @DeleteMapping("course/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+        return service.delete(id);
     }
 }

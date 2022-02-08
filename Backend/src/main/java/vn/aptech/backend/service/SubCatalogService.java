@@ -1,11 +1,9 @@
 package vn.aptech.backend.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import vn.aptech.backend.dto.SubCatalogDto;
-import vn.aptech.backend.dto.request.SubCatalog.SubCatalogUpdateRequest;
-import vn.aptech.backend.dto.request.SubCatalog.SubCatalogCreateRequest;
+import vn.aptech.backend.dto.request.subcatalog.SubCatalogUpdateRequest;
+import vn.aptech.backend.dto.request.subcatalog.SubCatalogCreateRequest;
 
 public interface SubCatalogService {
     ResponseEntity<?> create(SubCatalogCreateRequest request);

@@ -16,8 +16,8 @@ public class LectureController {
     @Autowired
     private LectureService service;
 
-    @GetMapping("/lecture/{lectureId}")
-    public ResponseEntity<?> getById(@PathVariable("lectureId") int id){
+    @GetMapping("/lecture/{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") int id){
         return service.findById(id);
     }
 
@@ -34,8 +34,8 @@ public class LectureController {
     }
 
     @Admin
-    @DeleteMapping("/lecture/delete/{lectureId}")
-    public ResponseEntity<?> delete(@PathVariable("lectureId") int id){
+    @DeleteMapping("/lecture/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") int id){
         return service.delete(id);
     }
 }
