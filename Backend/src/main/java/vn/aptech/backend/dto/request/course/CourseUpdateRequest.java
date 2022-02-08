@@ -38,7 +38,6 @@ public class CourseUpdateRequest {
     @NotNull
     private LanguageEnum language;
     @NotNull
-    @NotBlank
     private boolean activate;
     @NotNull
     private Float price;

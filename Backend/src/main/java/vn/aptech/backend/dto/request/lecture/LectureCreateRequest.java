@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class LectureCreateRequest {
     @NotNull
-    @NotBlank
     private Long lessonId;
 
     @NotNull
@@ -20,7 +19,6 @@ public class LectureCreateRequest {
     private String title;
 
     @NotNull
-    @NotBlank
     private Integer sort;
 
     @NotNull

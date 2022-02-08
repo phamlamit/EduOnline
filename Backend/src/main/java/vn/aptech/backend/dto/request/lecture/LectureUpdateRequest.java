@@ -12,16 +12,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class LectureUpdateRequest {
     @NotNull
-    @NotBlank
     private Long id;
     @NotNull
-    @NotBlank
     private Long lessonId;
     @NotNull
     @NotBlank
     private String title;
     @NotNull
-    @NotBlank
     private Integer sort;
     @NotNull
     @NotBlank
@@ -29,7 +26,6 @@ public class LectureUpdateRequest {
     @NotNull
     @NotBlank
     private String videoDuration;
-    @NotNull
-    @NotBlank
+
     private boolean preview;
 }

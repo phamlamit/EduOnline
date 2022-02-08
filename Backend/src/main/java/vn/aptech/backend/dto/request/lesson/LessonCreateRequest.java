@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class LessonCreateRequest {
     @NotNull
-    @NotBlank
     private Long courseId;
     @NotNull
     @NotBlank

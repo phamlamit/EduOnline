@@ -12,10 +12,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class LessonUpdateRequest {
     @NotNull
-    @NotBlank
     private Long id;
     @NotNull
-    @NotBlank
     private Long courseId;
     @NotNull
     @NotBlank
