@@ -28,7 +28,7 @@ public class Orders extends BaseEntity {
     private Date dateOrder;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
-    private List<OrderDetail> details;
+    private List<OrderDetail> orderDetails;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
