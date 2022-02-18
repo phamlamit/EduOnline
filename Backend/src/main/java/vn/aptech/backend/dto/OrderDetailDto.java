@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderDetailDto {
     private CourseDto course;
-    private OrdersDto orders;
 }

@@ -3,33 +3,31 @@ package vn.aptech.backend.dto.request.order;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.aptech.backend.dto.CourseDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckoutRequest {
+public class PaymentCreateRequest {
     @NotNull
-    private List<CourseDto> course;
+    private List<Long> courseIds;
     @NotNull
     @NotBlank
     private String billingAddress;
     @NotNull
     @NotBlank
-    private String nameCard;
+    private String nameHolder;
     @NotNull
     @NotBlank
-    private String CardNumber;
+    private String cardNumber;
     @NotNull
-    private Date date;
+    private String expirationDate;
     @NotNull
     @NotBlank
-    private String securityCode;
+    private String cvv;
     @NotNull
     @NotBlank
     private String zipcode;

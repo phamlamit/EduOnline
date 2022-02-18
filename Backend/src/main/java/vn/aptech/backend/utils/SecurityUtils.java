@@ -15,8 +15,7 @@ public class SecurityUtils {
     public AppUser getPrincipal() {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (customUserDetails != null) {
-            AppUser appUser = repository.findByUsernameAndDeletedDateIsNull(customUserDetails.getUsername()).orElse(null);
-            return appUser;
+            return repository.findByUsernameAndDeletedDateIsNull(customUserDetails.getUsername()).orElse(null);
         }
         return null;
     }

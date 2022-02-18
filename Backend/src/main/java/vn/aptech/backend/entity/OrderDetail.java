@@ -20,7 +20,7 @@ public class OrderDetail extends BaseEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Orders order;
 }

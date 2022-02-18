@@ -4,13 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import vn.aptech.backend.annotation.AllRole;
 import vn.aptech.backend.annotation.User;
 import vn.aptech.backend.dto.PageDto;
+import vn.aptech.backend.dto.request.order.PaymentCreateRequest;
 import vn.aptech.backend.service.OrdersService;
 
 @RestController
@@ -32,6 +31,12 @@ public class OrderController {
     @GetMapping("/oder/{orderNumber}")
     public ResponseEntity<?> getOrderDetails(@PathVariable("orderNumber") String orderNumber){
         return service.findByOrderNumber(orderNumber);
+    }
+
+    @User
+    @PostMapping("/order/payment")
+    public ResponseEntity<?> createPayment(@Validated @RequestBody PaymentCreateRequest request){
+        return service.createPayment(request);
     }
 
 }

@@ -25,10 +25,16 @@ public class Orders extends BaseEntity {
     @Column(name = "status_order")
     private boolean statusOrder;
     @Column(name = "date_order")
+    @Temporal(TemporalType.DATE)
     private Date dateOrder;
+    private String address;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order",cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private Payment payment;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
