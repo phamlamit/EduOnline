@@ -17,7 +17,7 @@ import vn.aptech.backend.service.LessonService;
 
 @RestController
 @RequestMapping("/api")
-public class CourseController {
+public class CourseController implements BaseController{
     @Autowired
     private CourseService service;
 

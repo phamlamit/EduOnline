@@ -12,7 +12,7 @@ import vn.aptech.backend.service.SubCatalogService;
 
 @RestController
 @RequestMapping("/api")
-public class SubCatalogController {
+public class SubCatalogController implements BaseController{
 
     @Autowired
     private SubCatalogService service;

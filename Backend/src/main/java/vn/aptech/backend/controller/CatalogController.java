@@ -9,10 +9,9 @@ import vn.aptech.backend.dto.CatalogDto;
 import vn.aptech.backend.dto.request.catalog.CatalogUpdateRequest;
 import vn.aptech.backend.dto.request.catalog.CatalogCreateRequest;
 import vn.aptech.backend.service.CatalogService;
-
 @RestController
 @RequestMapping("/api")
-public class CatalogController {
+public class CatalogController implements BaseController{
     @Autowired
     private CatalogService service;
 

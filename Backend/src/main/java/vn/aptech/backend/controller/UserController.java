@@ -19,7 +19,7 @@ import vn.aptech.backend.service.UserService;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class UserController implements BaseController{
     @Autowired
     private UserService service;
 

@@ -14,7 +14,7 @@ import vn.aptech.backend.service.OrdersService;
 
 @RestController
 @RequestMapping("/api")
-public class OrderController {
+public class OrderController implements BaseController{
 
     @Autowired
     private OrdersService service;

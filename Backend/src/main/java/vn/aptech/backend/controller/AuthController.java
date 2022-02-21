@@ -7,10 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.aptech.backend.dto.CustomUserDetails;
 import vn.aptech.backend.dto.ResponseHandler;
 import vn.aptech.backend.dto.request.LoginRequest;
@@ -22,10 +19,9 @@ import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController implements BaseController {
     @Autowired
     private UserService service;
     @Autowired
