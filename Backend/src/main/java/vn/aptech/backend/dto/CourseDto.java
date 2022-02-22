@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.aptech.backend.utils.enums.LanguageEnum;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,4 +26,12 @@ public class CourseDto {
     private String urlVideoDescription;
     private String imageVideoDescription;
     List<LessonDto> lessons;
+    private Date updatedDate;
+    //Feild orther
+    private boolean isPurchased;
+    private boolean isSaved;
+    private float avgRatting;
+    private int totalSold;
+    private ReviewDto userReview;
+    private List<ReviewDto> reviews;
 }

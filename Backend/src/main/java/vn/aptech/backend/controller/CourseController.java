@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.aptech.backend.annotation.Admin;
+import vn.aptech.backend.annotation.User;
 import vn.aptech.backend.dto.CourseDto;
 import vn.aptech.backend.dto.PageDto;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
@@ -67,8 +68,14 @@ public class CourseController implements BaseController{
     }
 
     @Admin
-    @DeleteMapping("course/delete/{id}")
+    @DeleteMapping("/course/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         return service.delete(id);
+    }
+
+    @User
+    @GetMapping("/course/savedcourses")
+    public ResponseEntity<?> getAllSavedCourse(){
+        return service.fillAllSavedCourse();
     }
 }

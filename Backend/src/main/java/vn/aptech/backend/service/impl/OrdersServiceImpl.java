@@ -16,7 +16,6 @@ import vn.aptech.backend.dto.response.orders.OrderUserResponse;
 import vn.aptech.backend.entity.*;
 import vn.aptech.backend.repository.CourseRepository;
 import vn.aptech.backend.repository.OrdersRepository;
-import vn.aptech.backend.repository.UserRepository;
 import vn.aptech.backend.service.OrdersService;
 import vn.aptech.backend.utils.SecurityUtils;
 import vn.aptech.backend.utils.enums.RoleEnums;
@@ -34,9 +33,6 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Autowired
     private OrdersRepository repository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CourseRepository courseRepository;
@@ -71,23 +67,23 @@ public class OrdersServiceImpl implements OrdersService {
         if (appUser == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
-        Orders order = new Orders();
+        Orders order = null;
         if (RoleEnums.ROLE_ADMIN.name().equals(appUser.getRole().getName())) {
             order = repository.findByOrderNumber(orderNumber).orElse(null);
         } else if (RoleEnums.ROLE_USER.name().equals(appUser.getRole().getName())) {
             order = repository.findByOrderNumber(orderNumber).orElse(null);
             if (order != null) {
-                if (order.getUser().getId() != appUser.getId()) {
+                if (!order.getUser().getId().equals(appUser.getId())) {
                     return new ResponseHandler<>().sendError(StatusErrorEnums.ORDER_CANNOT_TAKE_DATA);
+                }else {
+                    return new ResponseHandler<>().sendSuccess(mapper.map(order,OrdersDto.class));
                 }
             }
-        } else {
-            order = null;
         }
         if (order == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.ORDER_NOT_EXISTS);
         }
-        return null;
+        return new ResponseHandler<>().sendError("Not have data");
     }
 
     @Override
@@ -122,8 +118,7 @@ public class OrdersServiceImpl implements OrdersService {
             order.setStatusOrder(true);
             order.setDateOrder(new Date());
             order.setAddress(request.getBillingAddress());
-            Payment payment = new Payment();
-            payment = mapper.map(request,Payment.class);
+            Payment payment = mapper.map(request,Payment.class);
             payment.setDatePayment(new Date());
             payment.setUser(appUser);
             payment.setStatus(true);

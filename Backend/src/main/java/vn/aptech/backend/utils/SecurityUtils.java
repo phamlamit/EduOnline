@@ -13,9 +13,11 @@ public class SecurityUtils {
     private UserRepository repository;
 
     public AppUser getPrincipal() {
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (customUserDetails != null) {
-            return repository.findByUsernameAndDeletedDateIsNull(customUserDetails.getUsername()).orElse(null);
+        if (!SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equals("anonymousUser")) {
+            CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (customUserDetails != null) {
+                return repository.findByUsernameAndDeletedDateIsNull(customUserDetails.getUsername()).orElse(null);
+            }
         }
         return null;
     }

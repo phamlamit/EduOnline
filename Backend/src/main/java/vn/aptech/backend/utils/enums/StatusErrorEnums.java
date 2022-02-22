@@ -15,10 +15,12 @@ public enum StatusErrorEnums {
     //CatalogError - SubCatalogError
     CATALOG_NOT_FOUND(608, "Catalog not found"),
     SUBCATALOG_NOT_FOUND(608, "SubCatalog not found"),
+    REVIEW_NOT_FOUND(609,"Review not found"),
 
 
     //700-730 CourseError
     COURSE_NOT_FOUND(700, "Course not exists"),
+    SAVED_COURSE_NOT_FOUND(701, "Saved Course not exists"),
 
 
     //731-760 LessonError

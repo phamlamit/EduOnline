@@ -42,6 +42,12 @@ public class Course extends BaseEntity {
     @JoinColumn(name = "subcatalog_id")
     private SubCatalog subCatalog;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Lesson> lessons;
+
+    @OneToMany(mappedBy = "course",fetch = FetchType.LAZY)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "course")
+    private List<SavedCourse> savedCourses;
 }

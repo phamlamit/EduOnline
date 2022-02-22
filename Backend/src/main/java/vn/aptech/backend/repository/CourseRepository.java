@@ -3,8 +3,10 @@ package vn.aptech.backend.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import vn.aptech.backend.entity.Course;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -14,4 +16,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findCourseByDeletedDateIsNull(Pageable pageable);
 
     Page<Course> findCourseByTitleLikeAndDeletedDateIsNull(String name, Pageable pageable);
+
+    @Query(value = "SELECT o.course FROM SavedCourse o WHERE o.user.id = :userId AND o.deletedDate IS NULL")
+    List<Course> findCourseSavedByUserId(Long userId);
 }

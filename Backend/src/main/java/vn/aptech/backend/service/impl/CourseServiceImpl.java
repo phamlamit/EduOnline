@@ -8,24 +8,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.aptech.backend.dto.CourseDto;
+import vn.aptech.backend.dto.LessonDto;
 import vn.aptech.backend.dto.ResponseHandler;
+import vn.aptech.backend.dto.ReviewDto;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
-import vn.aptech.backend.entity.Course;
-import vn.aptech.backend.entity.Lecture;
-import vn.aptech.backend.entity.Lesson;
-import vn.aptech.backend.entity.SubCatalog;
-import vn.aptech.backend.repository.CourseRepository;
-import vn.aptech.backend.repository.LectureRepository;
-import vn.aptech.backend.repository.LessonRepository;
-import vn.aptech.backend.repository.SubCatalogRepository;
+import vn.aptech.backend.entity.*;
+import vn.aptech.backend.repository.*;
 import vn.aptech.backend.service.CourseService;
+import vn.aptech.backend.utils.SecurityUtils;
 import vn.aptech.backend.utils.enums.LanguageEnum;
+import vn.aptech.backend.utils.enums.RoleEnums;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -43,21 +43,33 @@ public class CourseServiceImpl implements CourseService {
     private SubCatalogRepository subCatalogRepository;
 
     @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private SavedCourseRepository savedCourseRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Transactional
     @Override
     public ResponseEntity<?> create(CourseCreateRequest request) {
         SubCatalog subCatalog = subCatalogRepository.findById(request.getSubCatalogId()).orElse(null);
-        if(subCatalog == null){
+        if (subCatalog == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
         Course course = this.convertSignupRequestToAppCourse(request);
 
         course.setSubCatalog(subCatalog);
         Course newCourse = repository.save(course);
-        request.getLessons().forEach(lessonCreateRequest->{
-            Lesson lesson = mapper.map(lessonCreateRequest,Lesson.class);
+        request.getLessons().forEach(lessonCreateRequest -> {
+            Lesson lesson = mapper.map(lessonCreateRequest, Lesson.class);
             lesson.setCourse(course);
             lesson.setCreatedDate(new Date());
             lessonRepository.save(lesson);
@@ -72,16 +84,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public ResponseEntity<Page<CourseDto>> fillAll(Pageable pageable) {
         Page<Course> courses = repository.findCourseByDeletedDateIsNull(pageable);
-        Page<CourseDto> courseDtoPage = courses.map(appCourse -> mapper.map(appCourse, CourseDto.class));
+        Page<CourseDto> courseDtoPage = courses.map(course -> mapper.map(course, CourseDto.class));
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public ResponseEntity<Page<CourseDto>> findByCourseTitle(String name, Pageable pageable) {
-        Page<Course> course = repository.findCourseByTitleLikeAndDeletedDateIsNull("%" + name + "%", pageable);
-        Page<CourseDto> courseDtoPage = course.map(appCourse -> mapper.map(course, CourseDto.class));
+        Page<Course> courses = repository.findCourseByTitleLikeAndDeletedDateIsNull("%" + name + "%", pageable);
+        Page<CourseDto> courseDtoPage = courses.map(course -> mapper.map(course, CourseDto.class));
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
@@ -89,7 +103,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResponseEntity<?> update(CourseUpdateRequest request) {
         SubCatalog subCatalog = subCatalogRepository.findById(request.getSubCatalogId()).orElse(null);
-        if(subCatalog == null){
+        if (subCatalog == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
         Course course = repository.findByIdAndDeletedDateIsNull(request.getId()).orElse(null);
@@ -118,8 +132,69 @@ public class CourseServiceImpl implements CourseService {
         if (course == null) {
             return new ResponseHandler<CourseDto>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
-        return new ResponseHandler<CourseDto>().sendSuccess(mapper.map(course, CourseDto.class));
 
+        CourseDto result = mapper.map(course, CourseDto.class);
+
+        List<LessonDto> lessons = lessonRepository.findByCourseId(id)
+                .stream().map(lesson -> mapper.map(lesson, LessonDto.class))
+                .collect(Collectors.toList());
+        result.setLessons(lessons);
+
+        List<ReviewDto> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(id)
+                .stream().map(review -> mapper.map(review, ReviewDto.class))
+                .collect(Collectors.toList());
+        result.setReviews(reviews);
+
+        List<Orders> orders = ordersRepository.findOrdersByCourseId(id);
+
+        result.setTotalSold(orders.size());
+
+        AppUser user = securityUtils.getPrincipal();
+        if (user != null) {
+            SavedCourse savedCourse = savedCourseRepository.findByCourseIdAndUserIdAndDeletedDateIsNull(id, user.getId()).orElse(null);
+            result.setSaved(savedCourse != null);
+            orders.forEach(order -> {
+                if (order.getUser().getId().equals(user.getId()) || user.getRole().getName().equals(RoleEnums.ROLE_ADMIN.name())) {
+                    result.setPurchased(true);
+                } else {
+                    result.setPurchased(false);
+                    result.getLessons().forEach(lessonDto -> lessonDto.getLectures().forEach(lectureDto -> {
+                        if (!lectureDto.isPreview()) {
+                            lectureDto.setVideoUrl(null);
+                        }
+                    }));
+                }
+            });
+            Review userReview = reviewRepository.findByCourseIdAndUserIdAndDeletedDateIsNull(id, user.getId()).orElse(null);
+            if (userReview != null) {
+                result.setUserReview(mapper.map(userReview, ReviewDto.class));
+
+            } else {
+                result.setUserReview(null);
+            }
+        } else {
+            result.setSaved(false);
+            result.setPurchased(false);
+            result.getLessons().forEach(lessonDto -> lessonDto.getLectures().forEach(lectureDto -> {
+                if (!lectureDto.isPreview()) {
+                    lectureDto.setVideoUrl(null);
+                }
+            }));
+            result.setPurchased(false);
+            result.setUserReview(null);
+        }
+        if (result.getReviews().size() > 0) {
+            float totalRating = 0;
+            for (Review review : course.getReviews()) {
+                totalRating += review.getRatting();
+            }
+            result.setAvgRatting(totalRating / course.getReviews().size());
+        } else {
+            result.setAvgRatting(0);
+        }
+
+
+        return new ResponseHandler<CourseDto>().sendSuccess(result);
     }
 
     @Override
@@ -148,9 +223,25 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseHandler<>().sendSuccess("Deleted success");
     }
 
+    @Override
+    public ResponseEntity<?> fillAllSavedCourse() {
+        AppUser appUser = securityUtils.getPrincipal();
+        if (appUser == null) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
+        }
+        List<Course> courses = repository.findCourseSavedByUserId(appUser.getId());
+
+        List<CourseDto> result = courses.stream().map(course -> {
+            CourseDto courseDto = mapper.map(course, CourseDto.class);
+            courseDto.setLessons(null);
+            return courseDto;
+        }).collect(Collectors.toList());
+        return new ResponseHandler<>().sendSuccess(result);
+    }
+
 
     public Course convertSignupRequestToAppCourse(CourseCreateRequest request) {
-        Course result = mapper.map(request,Course.class);
+        Course result = mapper.map(request, Course.class);
         result.setActivate(false);
         result.setCreatedDate(new Date());
         return result;

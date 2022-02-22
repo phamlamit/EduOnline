@@ -22,4 +22,6 @@ public interface CourseService {
     ResponseEntity<?> getLanguages();
 
     ResponseEntity<?> delete(Long id);
+
+    ResponseEntity<?> fillAllSavedCourse();
 }

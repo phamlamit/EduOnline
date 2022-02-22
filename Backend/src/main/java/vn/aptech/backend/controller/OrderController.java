@@ -20,7 +20,7 @@ public class OrderController implements BaseController{
     private OrdersService service;
 
     @AllRole
-    @GetMapping("/oders")
+    @GetMapping("/orders")
     public ResponseEntity<?> getAllOrders(PageDto page) {
         page = page.builder(page);
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
@@ -28,7 +28,7 @@ public class OrderController implements BaseController{
     }
 
     @AllRole
-    @GetMapping("/oder/{orderNumber}")
+    @GetMapping("/order/{orderNumber}")
     public ResponseEntity<?> getOrderDetails(@PathVariable("orderNumber") String orderNumber){
         return service.findByOrderNumber(orderNumber);
     }
