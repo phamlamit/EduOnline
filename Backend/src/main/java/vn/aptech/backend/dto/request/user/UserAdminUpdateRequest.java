@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAdminUpdateRequest {
+    @NotNull
     private Long id;
     @NotNull
     @NotBlank
@@ -28,6 +29,5 @@ public class UserAdminUpdateRequest {
     @NotBlank
     private String role;
     @NotNull
-    @NotBlank
     private boolean isEnabled;
 }
