@@ -48,5 +48,8 @@ public class CourseCreateRequest {
     @NotBlank
     private String imageVideoDescription;
 
+    @NotNull
+    private boolean activate;
+
     List<LessonCourseCreateRequest> lessons;
 }

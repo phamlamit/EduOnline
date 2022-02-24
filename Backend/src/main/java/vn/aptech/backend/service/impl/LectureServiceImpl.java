@@ -48,7 +48,6 @@ public class LectureServiceImpl implements LectureService {
         }
         Lecture lecture = mapper.map(request, Lecture.class);
         lecture.setLesson(lesson);
-        lecture.setCreatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lecture), LectureDto.class));
     }
 
@@ -71,7 +70,6 @@ public class LectureServiceImpl implements LectureService {
         lecture.setVideoUrl(request.getVideoUrl());
         lecture.setVideoDuration(request.getVideoDuration());
         lecture.setPreview(request.isPreview());
-        lecture.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lecture), LectureDto.class));
     }
 

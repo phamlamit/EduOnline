@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.UpdateTimestamp;
 import vn.aptech.backend.utils.enums.LanguageEnum;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -45,7 +47,7 @@ public class Course extends BaseEntity {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
-    @OneToMany(mappedBy = "course",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "course")

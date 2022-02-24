@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,6 +26,8 @@ public class Orders extends BaseEntity {
     @Column(name = "status_order")
     private boolean statusOrder;
     @Column(name = "date_order")
+
+    @CreatedDate
     @Temporal(TemporalType.DATE)
     private Date dateOrder;
     private String address;

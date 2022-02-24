@@ -42,7 +42,7 @@ public class LessonServiceImpl implements LessonService {
         if (course == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
-        List<Lesson> lessons = repository.findByCourseId(courseId);
+        List<Lesson> lessons = repository.findByCourseIdAndDeletedDateIsNull(courseId);
         List<LessonDto> result = lessons.stream().map(lesson -> mapper.map(lesson, LessonDto.class)).collect(Collectors.toList());
 
         return new ResponseHandler<>().sendSuccess(result);
@@ -65,7 +65,6 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
         Lesson lesson = mapper.map(request, Lesson.class);
-        lesson.setCreatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lesson), LessonDto.class));
     }
 
@@ -84,7 +83,6 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseHandler<>().sendError(StatusErrorEnums.LESSON_NOT_IN_COURSE);
         }
         lesson.setTitle(request.getTitle());
-        lesson.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lesson), LessonDto.class));
     }
 

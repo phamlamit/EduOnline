@@ -79,8 +79,6 @@ public class UserServiceImpl implements UserService {
 
         user.setEnabled(true);
 
-        user.setCreatedDate(new Date());
-
         UserDto newUser = mapper.map(repository.save(user), UserDto.class);
         return new ResponseHandler<>().sendSuccess(newUser);
     }
@@ -110,7 +108,7 @@ public class UserServiceImpl implements UserService {
             return response.sendError(StatusErrorEnums.USER_CONFIRM_PASSWORD_DIFFERENT_NEW_PASSWORD);
         }
         user.setPassword(encoder.encode(request.getNewPassword()));
-        user.setUpdatedDate(new Date());
+
         repository.save(user);
         return response.sendSuccess("Password change success");
     }
@@ -146,7 +144,6 @@ public class UserServiceImpl implements UserService {
         appUser.setPhone(request.getPhone());
         appUser.setEmail(request.getEmail());
         appUser.setAvatarImage(request.getAvatarImage());
-        appUser.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(appUser), UserDto.class));
     }
 
@@ -172,7 +169,6 @@ public class UserServiceImpl implements UserService {
         appUser.setPhone(request.getPhone());
         appUser.setEmail(request.getEmail());
         appUser.setAvatarImage(request.getAvatarImage());
-        appUser.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(appUser), UserDto.class));
     }
 
@@ -222,8 +218,6 @@ public class UserServiceImpl implements UserService {
         user.setRole(appRole);
 
         user.setEnabled(true);
-
-        user.setCreatedDate(new Date());
 
         UserDto newUser = mapper.map(repository.save(user), UserDto.class);
         return new ResponseHandler<>().sendSuccess(newUser);

@@ -5,18 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import vn.aptech.backend.dto.CourseDto;
 import vn.aptech.backend.dto.ResponseHandler;
 import vn.aptech.backend.dto.SubCatalogDto;
 import vn.aptech.backend.dto.request.subcatalog.SubCatalogCreateRequest;
 import vn.aptech.backend.dto.request.subcatalog.SubCatalogUpdateRequest;
-import vn.aptech.backend.entity.Catalog;
-import vn.aptech.backend.entity.SubCatalog;
-import vn.aptech.backend.repository.CatalogRepository;
-import vn.aptech.backend.repository.SubCatalogRepository;
+import vn.aptech.backend.entity.*;
+import vn.aptech.backend.repository.*;
 import vn.aptech.backend.service.SubCatalogService;
+import vn.aptech.backend.utils.SecurityUtils;
+import vn.aptech.backend.utils.enums.RoleEnums;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,22 @@ public class SubCatalogServiceImpl implements SubCatalogService {
 
     @Autowired
     private CatalogRepository catalogRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @Autowired
     private ModelMapper mapper;
+
 
     @Override
     public ResponseEntity<?> create(SubCatalogCreateRequest request) {
@@ -38,7 +53,6 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         }
         SubCatalog subCatalog = this.convertSignupRequesttoSubCatalog(request);
         subCatalog.setCatalog(catalog);
-        subCatalog.setCreatedDate(new Date());
         SubCatalogDto newSubCatalog = mapper.map(repository.save(subCatalog), SubCatalogDto.class);
         return new ResponseHandler<>().sendSuccess(newSubCatalog);
     }
@@ -63,7 +77,7 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         if (subCatalogs == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
-        if(request.getCatalogId()!=null){
+        if (request.getCatalogId() != null) {
             Catalog catalog = catalogRepository.findById(request.getCatalogId()).orElse(null);
             if (catalog == null) {
                 return new ResponseHandler<>().sendError(StatusErrorEnums.CATALOG_NOT_FOUND);
@@ -72,7 +86,6 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         }
         subCatalogs.setName(request.getName());
         subCatalogs.setDescription(request.getDescription());
-        subCatalogs.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(subCatalogs), SubCatalogDto.class));
     }
 
@@ -82,7 +95,17 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         if (subCatalog == null) {
             return new ResponseHandler<SubCatalogDto>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
         }
-        return new ResponseHandler<SubCatalogDto>().sendSuccess(mapper.map(subCatalog, SubCatalogDto.class));
+        SubCatalogDto result = mapper.map(subCatalog, SubCatalogDto.class);
+        List<Course> courses = new ArrayList<>();
+        AppUser user = securityUtils.getPrincipal();
+        if (user != null && user.getRole().getName().equals(RoleEnums.ROLE_ADMIN.name())) {
+            courses = subCatalog.getCourses();
+        } else {
+            courses = subCatalog.getCourses().stream().filter(Course::isActivate).collect(Collectors.toList());
+        }
+        List<CourseDto> courseDtos = courses.stream().map(this::convertEntityToDto).collect(Collectors.toList());
+        result.setCourses(courseDtos);
+        return new ResponseHandler<SubCatalogDto>().sendSuccess(result);
     }
 
     public SubCatalog convertSignupRequesttoSubCatalog(SubCatalogCreateRequest request) {
@@ -90,5 +113,27 @@ public class SubCatalogServiceImpl implements SubCatalogService {
         result.setName(request.getName());
         result.setDescription(request.getDescription());
         return result;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public CourseDto convertEntityToDto(Course course) {
+        CourseDto courseDto = mapper.map(course, CourseDto.class);
+        courseDto.setCatalog(course.getSubCatalog().getCatalog().getName());
+        List<Orders> orders = ordersRepository.findOrdersByCourseId(course.getId());
+        courseDto.setTotalSold(orders.size());
+        courseDto.setReviews(null);
+        courseDto.setLessons(null);
+        List<Review> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(course.getId());
+        if (reviews.size() > 0) {
+            float totalRating = 0;
+            for (Review review : reviews) {
+                totalRating += review.getRatting();
+            }
+            courseDto.setAvgRatting(totalRating / reviews.size());
+        } else {
+            courseDto.setAvgRatting(0);
+        }
+        return courseDto;
+
     }
 }

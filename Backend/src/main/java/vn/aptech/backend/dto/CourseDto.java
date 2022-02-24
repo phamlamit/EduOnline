@@ -27,6 +27,7 @@ public class CourseDto {
     private String imageVideoDescription;
     List<LessonDto> lessons;
     private Date updatedDate;
+    private String catalog;
     //Feild orther
     private boolean isPurchased;
     private boolean isSaved;

@@ -71,12 +71,10 @@ public class CourseServiceImpl implements CourseService {
         request.getLessons().forEach(lessonCreateRequest -> {
             Lesson lesson = mapper.map(lessonCreateRequest, Lesson.class);
             lesson.setCourse(course);
-            lesson.setCreatedDate(new Date());
             lessonRepository.save(lesson);
             lessonCreateRequest.getLectures().forEach(lectureCreateRequest -> {
                 Lecture lecture = mapper.map(lectureCreateRequest, Lecture.class);
                 lecture.setLesson(lesson);
-                lecture.setCreatedDate(new Date());
                 lectureRepository.save(lecture);
             });
         });
@@ -86,8 +84,15 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @SuppressWarnings("Duplicates")
     public ResponseEntity<Page<CourseDto>> fillAll(Pageable pageable) {
-        Page<Course> courses = repository.findCourseByDeletedDateIsNull(pageable);
-        Page<CourseDto> courseDtoPage = courses.map(course -> mapper.map(course, CourseDto.class));
+        Page<Course> courses = null;
+        AppUser user = securityUtils.getPrincipal();
+        if (user != null && user.getRole().getName().equals(RoleEnums.ROLE_ADMIN.name())) {
+            courses = repository.findCourseByDeletedDateIsNull(pageable);
+        } else {
+            courses = repository.findCourseByActivateIsTrueAndDeletedDateIsNull(pageable);
+        }
+
+        Page<CourseDto> courseDtoPage = courses.map(this::convertEntityToDto);
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
@@ -95,7 +100,7 @@ public class CourseServiceImpl implements CourseService {
     @SuppressWarnings("Duplicates")
     public ResponseEntity<Page<CourseDto>> findByCourseTitle(String name, Pageable pageable) {
         Page<Course> courses = repository.findCourseByTitleLikeAndDeletedDateIsNull("%" + name + "%", pageable);
-        Page<CourseDto> courseDtoPage = courses.map(course -> mapper.map(course, CourseDto.class));
+        Page<CourseDto> courseDtoPage = courses.map(this::convertEntityToDto);
         return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
     }
 
@@ -122,7 +127,6 @@ public class CourseServiceImpl implements CourseService {
         course.setVideoDuration(request.getVideoDuration());
         course.setUrlVideoDescription(request.getUrlVideoDescription());
         course.setImageVideoDescription(request.getImageVideoDescription());
-        course.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(course), CourseDto.class));
     }
 
@@ -135,10 +139,16 @@ public class CourseServiceImpl implements CourseService {
 
         CourseDto result = mapper.map(course, CourseDto.class);
 
-        List<LessonDto> lessons = lessonRepository.findByCourseId(id)
-                .stream().map(lesson -> mapper.map(lesson, LessonDto.class))
+        List<Lesson> lessons = lessonRepository.findByCourseIdAndDeletedDateIsNull(id);
+
+        lessons.forEach(lesson -> {
+            lesson.setLectures(lectureRepository.findByLessonIdAndDeletedDateIsNull(lesson.getId()));
+        });
+
+        List<LessonDto> lessonDtos = lessons.stream()
+                .map(lesson -> mapper.map(lesson, LessonDto.class))
                 .collect(Collectors.toList());
-        result.setLessons(lessons);
+        result.setLessons(lessonDtos);
 
         List<ReviewDto> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(id)
                 .stream().map(review -> mapper.map(review, ReviewDto.class))
@@ -239,11 +249,41 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseHandler<>().sendSuccess(result);
     }
 
+    @Override
+    public ResponseEntity<?> fillAllPurchasedCoursed() {
+        AppUser user = securityUtils.getPrincipal();
+
+        List<Course> courses = repository.findCoursesByUserId(user.getId());
+
+        List<CourseDto> result = courses.stream().map(course -> mapper.map(course, CourseDto.class)).collect(Collectors.toList());
+        return new ResponseHandler<>().sendSuccess(result);
+    }
+
 
     public Course convertSignupRequestToAppCourse(CourseCreateRequest request) {
         Course result = mapper.map(request, Course.class);
-        result.setActivate(false);
-        result.setCreatedDate(new Date());
         return result;
+    }
+
+    @SuppressWarnings("Duplicates")
+    public CourseDto convertEntityToDto(Course course) {
+        CourseDto courseDto = mapper.map(course, CourseDto.class);
+        courseDto.setCatalog(course.getSubCatalog().getCatalog().getName());
+        List<Orders> orders = ordersRepository.findOrdersByCourseId(course.getId());
+        courseDto.setTotalSold(orders.size());
+        courseDto.setReviews(null);
+        courseDto.setLessons(null);
+        List<Review> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(course.getId());
+        if (reviews.size() > 0) {
+            float totalRating = 0;
+            for (Review review : reviews) {
+                totalRating += review.getRatting();
+            }
+            courseDto.setAvgRatting(totalRating / reviews.size());
+        } else {
+            courseDto.setAvgRatting(0);
+        }
+        return courseDto;
+
     }
 }

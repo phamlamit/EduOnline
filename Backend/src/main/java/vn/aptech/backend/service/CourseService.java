@@ -24,4 +24,6 @@ public interface CourseService {
     ResponseEntity<?> delete(Long id);
 
     ResponseEntity<?> fillAllSavedCourse();
+
+    ResponseEntity<?> fillAllPurchasedCoursed();
 }

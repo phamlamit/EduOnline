@@ -28,7 +28,6 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public ResponseEntity<?> create(CatalogCreateRequest request) {
         Catalog catalog = this.convertSignupRequesttoCatalog(request);
-        catalog.setCreatedDate(new Date());
         CatalogDto newCatalog = mapper.map(repository.save(catalog), CatalogDto.class);
         return new ResponseHandler<>().sendSuccess(newCatalog);
     }
@@ -55,7 +54,6 @@ public class CatalogServiceImpl implements CatalogService {
         }
         catalog.setName(request.getName());
         catalog.setDescription(request.getDescription());
-        catalog.setUpdatedDate(new Date());
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(catalog), SubCatalogDto.class));
 
     }

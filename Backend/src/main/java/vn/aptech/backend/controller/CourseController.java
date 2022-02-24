@@ -78,4 +78,10 @@ public class CourseController implements BaseController{
     public ResponseEntity<?> getAllSavedCourse(){
         return service.fillAllSavedCourse();
     }
+
+    @User
+    @GetMapping("/course/enroll")
+    public ResponseEntity<?> getAllPurchasedCourses(){
+        return service.fillAllPurchasedCoursed();
+    }
 }
