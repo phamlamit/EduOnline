@@ -11,9 +11,6 @@ import vn.aptech.backend.dto.request.user.UserCreateAdminRequest;
 import vn.aptech.backend.dto.request.user.UserUpdateRequest;
 
 public interface UserService {
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
 
     ResponseEntity<?> create(SignupRequest request);
 

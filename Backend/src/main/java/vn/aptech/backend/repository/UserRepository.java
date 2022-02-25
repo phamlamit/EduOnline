@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import vn.aptech.backend.dto.UserDto;
 import vn.aptech.backend.entity.AppUser;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,13 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByEmailAndIdIsNot(String email, Long id);
+
     Page<AppUser> findAppUsersByDeletedDateIsNull(Pageable pageable);
 
     Page<AppUser> findAppUsersByUsernameLikeAndDeletedDateIsNull(String username, Pageable pageable);
+
+    int countAllByDeletedDateIsNull();
+
+    int countAllByCreatedDateAndDeletedDateIsNull(Date date);
 }

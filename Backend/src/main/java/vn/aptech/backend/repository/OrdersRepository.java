@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vn.aptech.backend.entity.Orders;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,16 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     @Query(value = "SELECT DISTINCT o.order from OrderDetail o WHERE o.course.id = :courseId")
     List<Orders> findOrdersByCourseId(Long courseId);
+
+    @Query(value = "SELECT SUM(o.totalAmount) FROM Orders o WHERE o.deletedDate IS NULL")
+    Float sumTotalSales();
+
+    @Query(value = "SELECT SUM(o.totalAmount) FROM Orders o WHERE o.dateOrder = :date AND o.deletedDate IS NULL")
+    Float sumTotalSalesToday(Date date);
+
+    @Query(value = "SELECT COUNT (o) FROM OrderDetail o WHERE o.deletedDate IS NULL")
+    int countTotalCourseSales();
+
+    @Query(value = "SELECT COUNT(o) FROM OrderDetail o WHERE o.createdDate = :date AND o.deletedDate IS NULL")
+    int countTotalTodayCourseSales(Date date);
 }

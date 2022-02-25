@@ -29,5 +29,5 @@ public class UserAdminUpdateRequest {
     @NotBlank
     private String role;
     @NotNull
-    private boolean isEnabled;
+    private boolean enabled;
 }

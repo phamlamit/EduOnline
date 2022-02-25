@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vn.aptech.backend.entity.Course;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query(value = "SELECT o.course FROM OrderDetail o WHERE o.order.user.id = :userId")
     List<Course> findCoursesByUserId(Long userId);
+
+    int countCourseByDeletedDateIsNull();
+
+    int countCourseByCreatedDateAndDeletedDateIsNull(Date date);
+
 }

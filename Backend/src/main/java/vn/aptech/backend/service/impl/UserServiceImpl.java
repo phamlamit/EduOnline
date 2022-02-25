@@ -46,17 +46,6 @@ public class UserServiceImpl implements UserService {
     @Value("${default.avatar}")
     private String defaultAvatar;
 
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return repository.existsByUsername(username);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return repository.existsByEmail(email);
-    }
-
     @Transactional
     @Override
     public ResponseEntity<?> create(SignupRequest request) {
@@ -154,7 +143,7 @@ public class UserServiceImpl implements UserService {
         if (appUser == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
-        if (repository.existsByEmail(request.getEmail())) {
+        if (repository.existsByEmailAndIdIsNot(request.getEmail(), request.getId())) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_EMAIL_IS_ALREADY_USE);
         }
         AppRole role = roleRepository.findByName(request.getRole()).orElse(null);
