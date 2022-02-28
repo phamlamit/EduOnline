@@ -65,6 +65,7 @@ public class LessonServiceImpl implements LessonService {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
         Lesson lesson = mapper.map(request, Lesson.class);
+        lesson.setCourse(course);
         return new ResponseHandler<>().sendSuccess(mapper.map(repository.save(lesson), LessonDto.class));
     }
 

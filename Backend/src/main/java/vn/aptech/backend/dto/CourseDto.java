@@ -28,6 +28,7 @@ public class CourseDto {
     List<LessonDto> lessons;
     private Date updatedDate;
     private String catalog;
+    private Long subCatalogId;
     //Feild orther
     private boolean isPurchased;
     private boolean isSaved;

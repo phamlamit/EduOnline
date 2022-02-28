@@ -139,10 +139,12 @@ public class CourseServiceImpl implements CourseService {
 
         CourseDto result = mapper.map(course, CourseDto.class);
 
+        result.setSubCatalogId(course.getSubCatalog().getId());
+
         List<Lesson> lessons = lessonRepository.findByCourseIdAndDeletedDateIsNull(id);
 
         lessons.forEach(lesson -> {
-            lesson.setLectures(lectureRepository.findByLessonIdAndDeletedDateIsNull(lesson.getId()));
+            lesson.setLectures(lectureRepository.findByLessonIdAndDeletedDateIsNullOOrderBySortAsc(lesson.getId()));
         });
 
         List<LessonDto> lessonDtos = lessons.stream()
