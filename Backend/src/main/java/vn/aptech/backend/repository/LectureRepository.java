@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface LectureRepository extends JpaRepository<Lecture,Long> {
     Optional<Lecture> findByIdAndDeletedDateIsNull(long id);
 
-    List<Lecture> findByLessonIdAndDeletedDateIsNullOOrderBySortAsc(Long lessonId);
+    List<Lecture> findByLessonIdAndDeletedDateIsNullOrderBySortAsc(Long lessonId);
 }

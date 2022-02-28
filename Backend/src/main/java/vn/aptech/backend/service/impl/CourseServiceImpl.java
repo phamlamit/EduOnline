@@ -144,7 +144,7 @@ public class CourseServiceImpl implements CourseService {
         List<Lesson> lessons = lessonRepository.findByCourseIdAndDeletedDateIsNull(id);
 
         lessons.forEach(lesson -> {
-            lesson.setLectures(lectureRepository.findByLessonIdAndDeletedDateIsNullOOrderBySortAsc(lesson.getId()));
+            lesson.setLectures(lectureRepository.findByLessonIdAndDeletedDateIsNullOrderBySortAsc(lesson.getId()));
         });
 
         List<LessonDto> lessonDtos = lessons.stream()
