@@ -83,7 +83,7 @@ public class OrdersServiceImpl implements OrdersService {
         if (order == null) {
             return new ResponseHandler<>().sendError(StatusErrorEnums.ORDER_NOT_EXISTS);
         }
-        return new ResponseHandler<>().sendError("Not have data");
+        return new ResponseHandler<>().sendSuccess(mapper.map(order,OrdersDto.class));
     }
 
     @Override
