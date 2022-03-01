@@ -265,6 +265,24 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseHandler<>().sendSuccess(result);
     }
 
+    @Override
+    public ResponseEntity<Page<CourseDto>> filterCourse(String filter, Pageable pageable) {
+        Page<Course> courses = null;
+        switch (filter) {
+            case "Draft":
+                courses = repository.findByActivateAndDeletedDateIsNull(false, pageable);
+                break;
+            case "Activate":
+                courses = repository.findByActivateAndDeletedDateIsNull(true, pageable);
+                break;
+            default:
+                courses = repository.findCourseByDeletedDateIsNull(pageable);
+                break;
+        }
+        Page<CourseDto> courseDtoPage = courses.map(this::convertEntityToDto);
+        return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
+    }
+
 
     public Course convertSignupRequestToAppCourse(CourseCreateRequest request) {
         Course result = mapper.map(request, Course.class);

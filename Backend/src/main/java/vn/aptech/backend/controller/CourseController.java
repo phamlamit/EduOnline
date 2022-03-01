@@ -11,14 +11,14 @@ import vn.aptech.backend.annotation.Admin;
 import vn.aptech.backend.annotation.User;
 import vn.aptech.backend.dto.CourseDto;
 import vn.aptech.backend.dto.PageDto;
-import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
+import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.service.CourseService;
 import vn.aptech.backend.service.LessonService;
 
 @RestController
 @RequestMapping("/api")
-public class CourseController implements BaseController{
+public class CourseController implements BaseController {
     @Autowired
     private CourseService service;
 
@@ -26,7 +26,7 @@ public class CourseController implements BaseController{
     private LessonService lessonService;
 
     @GetMapping("/languages")
-    public ResponseEntity<?> getLanguages(){
+    public ResponseEntity<?> getLanguages() {
         return service.getLanguages();
     }
 
@@ -35,6 +35,14 @@ public class CourseController implements BaseController{
         page = page.builder(page);
         Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
         return service.fillAll(pageable);
+    }
+
+    @Admin
+    @GetMapping("/course/filter")
+    public ResponseEntity<Page<CourseDto>> filterCourse(String filter, PageDto page){
+        page = page.builder(page);
+        Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
+        return service.filterCourse(filter,pageable);
     }
 
     @Admin
@@ -69,19 +77,19 @@ public class CourseController implements BaseController{
 
     @Admin
     @DeleteMapping("/course/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         return service.delete(id);
     }
 
     @User
     @GetMapping("/course/savedcourses")
-    public ResponseEntity<?> getAllSavedCourse(){
+    public ResponseEntity<?> getAllSavedCourse() {
         return service.fillAllSavedCourse();
     }
 
     @User
     @GetMapping("/course/enroll")
-    public ResponseEntity<?> getAllPurchasedCourses(){
+    public ResponseEntity<?> getAllPurchasedCourses() {
         return service.fillAllPurchasedCoursed();
     }
 }

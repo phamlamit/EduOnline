@@ -26,4 +26,6 @@ public interface CourseService {
     ResponseEntity<?> fillAllSavedCourse();
 
     ResponseEntity<?> fillAllPurchasedCoursed();
+
+    ResponseEntity<Page<CourseDto>> filterCourse(String filter, Pageable pageable);
 }

@@ -20,6 +20,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Page<Course> findCourseByTitleLikeAndDeletedDateIsNull(String name, Pageable pageable);
 
+    Page<Course> findByActivateAndDeletedDateIsNull(boolean activate, Pageable pageable);
+
     @Query(value = "SELECT o.course FROM SavedCourse o WHERE o.user.id = :userId AND o.deletedDate IS NULL")
     List<Course> findCourseSavedByUserId(Long userId);
 
