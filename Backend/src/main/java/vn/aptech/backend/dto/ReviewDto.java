@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewDto {
     private Long id;
+    private String username;
     private Float ratting;
     private String feedback;
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewAdminResponse {
     private Long id;
+    private String username;
     private String courseTitle;
     private Float ratting;
     private String feedback;

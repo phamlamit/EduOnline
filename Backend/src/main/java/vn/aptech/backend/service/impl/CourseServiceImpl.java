@@ -153,7 +153,11 @@ public class CourseServiceImpl implements CourseService {
         result.setLessons(lessonDtos);
 
         List<ReviewDto> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(id)
-                .stream().map(review -> mapper.map(review, ReviewDto.class))
+                .stream().map(review -> {
+                    ReviewDto reviewDto = mapper.map(review, ReviewDto.class);
+                    reviewDto.setUsername(review.getUser().getUsername());
+                    return reviewDto;
+                })
                 .collect(Collectors.toList());
         result.setReviews(reviews);
 

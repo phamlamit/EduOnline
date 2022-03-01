@@ -90,6 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewAdminResponse convertEntityToAdminResponse(Review review){
         ReviewAdminResponse result = mapper.map(review,ReviewAdminResponse.class);
         result.setCourseTitle(review.getCourse().getTitle());
+        result.setUsername(review.getUser().getUsername());
         return result;
     }
 }
