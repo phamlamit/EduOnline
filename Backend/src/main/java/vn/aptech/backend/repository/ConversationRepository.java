@@ -8,4 +8,6 @@ import java.util.List;
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
 
     List<Conversation> findByUserOneIdOrUserTwoId(Long userOneId, Long userTwoId);
+
+    List<Conversation> findByUserOneId(Long userOneId);
 }

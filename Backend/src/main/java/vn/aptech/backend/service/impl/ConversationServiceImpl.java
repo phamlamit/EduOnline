@@ -20,6 +20,7 @@ import vn.aptech.backend.utils.SecurityUtils;
 import vn.aptech.backend.utils.enums.RoleEnums;
 import vn.aptech.backend.utils.enums.StatusErrorEnums;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,16 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public ResponseEntity<?> fillAllConversations() {
         AppUser user = securityUtils.getPrincipal();
-        List<Conversation> conversations = conversationRepository.findByUserOneIdOrUserTwoId(user.getId(), user.getId());
+        List<Conversation> conversations = new ArrayList<>();
+        switch (user.getRole().getName()){
+            case "ROLE_USER":
+                conversationRepository.findByUserOneId(user.getId());
+                break;
+            case "ROLE_ADMIN" :
+                conversations = conversationRepository.findByUserOneIdOrUserTwoId(user.getId(), user.getId());
+                break;
+        }
+
         if (user.getRole().getName().equals(RoleEnums.ROLE_USER.name())) {
             if (conversations.size() == 0) {
                 Conversation conversation = new Conversation();
@@ -62,7 +72,7 @@ public class ConversationServiceImpl implements ConversationService {
             } else {
                 response.setUser(conversation.getUserOne().getFullname());
             }
-            if (conversation.getMessages().size() > 0) {
+            if (conversation.getMessages()!= null && conversation.getMessages().size() > 0) {
                 response.setLastMessage(conversation.getMessages().get(conversation.getMessages().size() - 1).getMessage());
             }
             return response;
