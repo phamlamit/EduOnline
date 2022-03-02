@@ -22,33 +22,6 @@ import java.util.List;
 
 @RestControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        List<String> errors = new ArrayList<String>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
-        }
-
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, "Failed validation", errors);
-        return handleExceptionInternal(
-                ex, apiError, headers, apiError.getStatus(), request);
-    }
-
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
-            MethodArgumentTypeMismatchException ex, WebRequest request) {
-        String error =
-                ex.getName() + " should be of type " + ex.getRequiredType().getName();
-
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
 
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
@@ -68,26 +41,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<Object> handleAccess(Exception ex, WebRequest request) {
-        ApiError apiError = new ApiError(
-                HttpStatus.FORBIDDEN, ex.getLocalizedMessage(), "error occurred");
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
-
     @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), "User name or Password is wrong");
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
-    }
-
-    @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        ApiError apiError = new ApiError(
-                HttpStatus.MULTI_STATUS, ex.getLocalizedMessage(), "error occurred");
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }

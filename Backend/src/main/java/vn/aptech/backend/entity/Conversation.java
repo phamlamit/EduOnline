@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,17 +15,16 @@ import javax.persistence.*;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "Messages")
-public class Messages extends BaseEntity {
+@Table(name = "Conversation")
+public class Conversation extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private AppUser user;
+    @JoinColumn(name = "user_id_one")
+    private AppUser userOne;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id")
-    private Conversation conversation;
+    @JoinColumn(name = "user_id_two")
+    private AppUser userTwo;
 
-    private String message;
-
-    private boolean responsed;
+    @OneToMany(mappedBy = "conversation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Messages> messages;
 }

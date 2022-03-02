@@ -17,6 +17,8 @@ public enum StatusErrorEnums {
     SUBCATALOG_NOT_FOUND(608, "SubCatalog not found"),
     REVIEW_NOT_FOUND(609,"Review not found"),
 
+    CONVERSATION_NOT_FOUND(610,"Conversation not found"),
+
 
     //700-730 CourseError
     COURSE_NOT_FOUND(700, "Course not exists"),
