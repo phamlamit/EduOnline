@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import vn.aptech.backend.dto.CourseDto;
+import vn.aptech.backend.dto.request.course.CourseDraftCreateRequest;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
 
@@ -28,4 +29,6 @@ public interface CourseService {
     ResponseEntity<?> fillAllPurchasedCoursed();
 
     ResponseEntity<Page<CourseDto>> filterCourse(String filter, Pageable pageable);
+
+    ResponseEntity<?> createCourseDraft(CourseDraftCreateRequest request);
 }

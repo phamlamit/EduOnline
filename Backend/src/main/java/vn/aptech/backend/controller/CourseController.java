@@ -12,6 +12,7 @@ import vn.aptech.backend.annotation.User;
 import vn.aptech.backend.dto.CourseDto;
 import vn.aptech.backend.dto.PageDto;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
+import vn.aptech.backend.dto.request.course.CourseDraftCreateRequest;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.service.CourseService;
 import vn.aptech.backend.service.LessonService;
@@ -49,6 +50,12 @@ public class CourseController implements BaseController {
     @PostMapping("/course/create")
     public ResponseEntity<?> create(@Validated @RequestBody CourseCreateRequest request) {
         return service.create(request);
+    }
+
+    @Admin
+    @PostMapping("/course/create-draft")
+    public ResponseEntity<?> create(@Validated @RequestBody CourseDraftCreateRequest request) {
+        return service.createCourseDraft(request);
     }
 
     @Admin

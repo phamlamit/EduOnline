@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.aptech.backend.annotation.Admin;
 import vn.aptech.backend.annotation.AllRole;
 import vn.aptech.backend.dto.PageDto;
@@ -17,9 +19,15 @@ import vn.aptech.backend.dto.request.user.UserCreateAdminRequest;
 import vn.aptech.backend.dto.request.user.UserUpdateRequest;
 import vn.aptech.backend.service.UserService;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @RestController
 @RequestMapping("/api")
-public class UserController implements BaseController{
+public class UserController implements BaseController {
     @Autowired
     private UserService service;
 
@@ -54,7 +62,7 @@ public class UserController implements BaseController{
 
     @Admin
     @PostMapping("/user/create")
-    public ResponseEntity<?> create(@RequestBody @Validated UserCreateAdminRequest request){
+    public ResponseEntity<?> create(@RequestBody @Validated UserCreateAdminRequest request) {
         return service.create(request);
     }
 
@@ -81,4 +89,5 @@ public class UserController implements BaseController{
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return service.delete(id);
     }
+
 }

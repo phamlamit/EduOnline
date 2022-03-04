@@ -12,6 +12,7 @@ import vn.aptech.backend.dto.LessonDto;
 import vn.aptech.backend.dto.ResponseHandler;
 import vn.aptech.backend.dto.ReviewDto;
 import vn.aptech.backend.dto.request.course.CourseCreateRequest;
+import vn.aptech.backend.dto.request.course.CourseDraftCreateRequest;
 import vn.aptech.backend.dto.request.course.CourseUpdateRequest;
 import vn.aptech.backend.entity.*;
 import vn.aptech.backend.repository.*;
@@ -78,6 +79,20 @@ public class CourseServiceImpl implements CourseService {
                 lectureRepository.save(lecture);
             });
         });
+        return new ResponseHandler<>().sendSuccess(mapper.map(newCourse, CourseDto.class));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> createCourseDraft(CourseDraftCreateRequest request) {
+        SubCatalog subCatalog = subCatalogRepository.findById(request.getSubCatalogId()).orElse(null);
+        if (subCatalog == null) {
+            return new ResponseHandler<>().sendError(StatusErrorEnums.SUBCATALOG_NOT_FOUND);
+        }
+        Course course = mapper.map(request, Course.class);
+        course.setActivate(false);
+        course.setSubCatalog(subCatalog);
+        Course newCourse = repository.save(course);
         return new ResponseHandler<>().sendSuccess(mapper.map(newCourse, CourseDto.class));
     }
 
