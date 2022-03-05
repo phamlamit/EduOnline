@@ -14,7 +14,7 @@ import vn.aptech.backend.service.OrdersService;
 
 @RestController
 @RequestMapping("/api")
-public class OrderController implements BaseController{
+public class OrderController implements BaseController {
 
     @Autowired
     private OrdersService service;
@@ -29,14 +29,22 @@ public class OrderController implements BaseController{
 
     @AllRole
     @GetMapping("/order/{orderNumber}")
-    public ResponseEntity<?> getOrderDetails(@PathVariable("orderNumber") String orderNumber){
+    public ResponseEntity<?> getOrderDetails(@PathVariable("orderNumber") String orderNumber) {
         return service.findByOrderNumber(orderNumber);
     }
 
     @User
     @PostMapping("/order/payment")
-    public ResponseEntity<?> createPayment(@Validated @RequestBody PaymentCreateRequest request){
+    public ResponseEntity<?> createPayment(@Validated @RequestBody PaymentCreateRequest request) {
         return service.createPayment(request);
+    }
+
+    @AllRole
+    @GetMapping("/order/search")
+    public ResponseEntity<?> getOrdersByOrderNumber(String orderNumber,PageDto page) {
+        page = page.builder(page);
+        Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
+        return service.findOrdersByOrderNumber(orderNumber,pageable);
     }
 
 }

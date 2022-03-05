@@ -16,19 +16,5 @@ public class PaymentCreateRequest {
     private List<Long> courseIds;
     @NotNull
     @NotBlank
-    private String billingAddress;
-    @NotNull
-    @NotBlank
-    private String nameHolder;
-    @NotNull
-    @NotBlank
-    private String cardNumber;
-    @NotNull
-    private String expirationDate;
-    @NotNull
-    @NotBlank
-    private String cvv;
-    @NotNull
-    @NotBlank
-    private String zipcode;
+    private String orderId;
 }

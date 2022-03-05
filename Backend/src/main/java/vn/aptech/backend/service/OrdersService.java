@@ -10,4 +10,6 @@ public interface OrdersService {
     ResponseEntity<?> findByOrderNumber(String orderNumber);
 
     ResponseEntity<?> createPayment(PaymentCreateRequest request);
+
+    ResponseEntity<?> findOrdersByOrderNumber(String orderNumber, Pageable pageable);
 }

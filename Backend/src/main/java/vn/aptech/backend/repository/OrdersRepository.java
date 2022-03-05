@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vn.aptech.backend.entity.Orders;
 
 import java.util.Date;
@@ -33,4 +34,10 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     @Query(value = "SELECT COUNT(o) FROM OrderDetail o WHERE o.createdDate = :date AND o.deletedDate IS NULL")
     int countTotalTodayCourseSales(Date date);
+
+    @Query(value = "SELECT o FROM Orders o WHERE o.user.id = :id AND o.orderNumber LIKE :orderNumber")
+    Page<Orders> findAllByUserIdAndOrderNumber(@Param("id") Long id, @Param("orderNumber") String orderNumber, Pageable pageable);
+
+    @Query(value = "SELECT o FROM Orders o WHERE o.orderNumber LIKE :orderNumber")
+    Page<Orders> findAllByOrderNumber(String orderNumber, Pageable pageable);
 }

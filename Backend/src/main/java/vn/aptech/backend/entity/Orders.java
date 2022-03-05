@@ -30,7 +30,6 @@ public class Orders extends BaseEntity {
     @CreatedDate
     @Temporal(TemporalType.DATE)
     private Date dateOrder;
-    private String address;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order",cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;

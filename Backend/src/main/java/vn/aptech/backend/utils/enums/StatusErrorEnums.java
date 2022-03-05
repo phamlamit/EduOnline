@@ -42,6 +42,7 @@ public enum StatusErrorEnums {
     //851-900 Order Error
     ORDER_NOT_EXISTS(851, "Order not exists"),
     ORDER_CANNOT_TAKE_DATA(852, "Order take data"),
+    GET_ORDER_ID_HAVE_PROBLEM(853,"Get Order Paypal have problem"),
 
     //900-999 Other
     OTHER_900(900, "Some thing is wrong");

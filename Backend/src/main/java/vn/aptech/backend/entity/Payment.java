@@ -25,15 +25,10 @@ public class Payment extends BaseEntity {
     @Column(name = "date_payment")
     private Date datePayment;
 
-    @Column(name = "card_number")
-    private String cardNumber;
-    @Column(name = "name_holder")
-    private String nameHolder;
-    @Column(name = "expiration_date")
-    private String expirationDate;
-    private String cvv;
+    @Column(name = "order_id")
+    private String orderId;
+
     private boolean status;
-    private String zipcode;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
