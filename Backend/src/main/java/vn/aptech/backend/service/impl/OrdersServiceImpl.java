@@ -156,8 +156,8 @@ public class OrdersServiceImpl implements OrdersService {
             return new ResponseHandler<>().sendError(StatusErrorEnums.USER_NOT_FOUND);
         }
         if (RoleEnums.ROLE_ADMIN.name().equals(appUser.getRole().getName())) {
-            Page<Orders> orders = repository.findAllByOrderNumber(orderNumber, pageable);
-            Page<OrderAdminResponse> orderAdminResponses = orders.map(order -> mapper.map("%"+order+"%", OrderAdminResponse.class));
+            Page<Orders> orders = repository.findAllByOrderNumber("%"+orderNumber+"%", pageable);
+            Page<OrderAdminResponse> orderAdminResponses = orders.map(order -> mapper.map(order, OrderAdminResponse.class));
             return new ResponseHandler<>().sendSuccess(orderAdminResponses);
         } else if (RoleEnums.ROLE_USER.name().equals(appUser.getRole().getName())) {
             Page<Orders> orders = repository.findAllByUserIdAndOrderNumber(appUser.getId(), "%"+orderNumber+"%", pageable);
