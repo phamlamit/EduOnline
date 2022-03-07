@@ -142,6 +142,7 @@ public class OrdersServiceImpl implements OrdersService {
             }
             payment.setUser(appUser);
             payment.setAmount(Double.parseDouble(object.get("gross_total_amount").getAsJsonObject().get("value").getAsString()));
+            order.setTotalAmount(Double.parseDouble(object.get("gross_total_amount").getAsJsonObject().get("value").getAsString()));
             order.setPayment(payment);
             payment.setOrder(order);
             Orders newOrder = repository.save(order);
