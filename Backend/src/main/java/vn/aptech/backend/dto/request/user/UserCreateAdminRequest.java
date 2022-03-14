@@ -21,8 +21,6 @@ public class UserCreateAdminRequest {
     @NotNull
     @NotBlank
     private String email;
-    @NotNull
-    @NotBlank
     private String fullname;
     @NotNull
     @NotBlank
