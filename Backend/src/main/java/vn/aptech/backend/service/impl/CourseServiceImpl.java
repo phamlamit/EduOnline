@@ -185,9 +185,10 @@ public class CourseServiceImpl implements CourseService {
         if (user != null) {
             SavedCourse savedCourse = savedCourseRepository.findByCourseIdAndUserIdAndDeletedDateIsNull(id, user.getId()).orElse(null);
             result.setSaved(savedCourse != null);
-            orders.forEach(order -> {
+            for(Orders order : orders){
                 if (order.getUser().getId().equals(user.getId()) || user.getRole().getName().equals(RoleEnums.ROLE_ADMIN.name())) {
                     result.setPurchased(true);
+                    break;
                 } else {
                     result.setPurchased(false);
                     result.getLessons().forEach(lessonDto -> lessonDto.getLectures().forEach(lectureDto -> {
@@ -196,6 +197,9 @@ public class CourseServiceImpl implements CourseService {
                         }
                     }));
                 }
+            }
+            orders.forEach(order -> {
+
             });
             Review userReview = reviewRepository.findByCourseIdAndUserIdAndDeletedDateIsNull(id, user.getId()).orElse(null);
             if (userReview != null) {
