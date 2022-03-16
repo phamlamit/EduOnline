@@ -131,6 +131,7 @@ public class CourseServiceImpl implements CourseService {
             return new ResponseHandler<>().sendError(StatusErrorEnums.COURSE_NOT_FOUND);
         }
         course.setTitle(request.getTitle());
+        course.setShortDescription(request.getShortDescription());
         course.setSubCatalog(subCatalog);
         course.setDescription(request.getDescription());
         course.setRequirement(request.getRequirement());

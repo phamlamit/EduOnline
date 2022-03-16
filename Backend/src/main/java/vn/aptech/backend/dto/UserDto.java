@@ -15,6 +15,7 @@ public class UserDto {
     private String email;
     private boolean enabled;
     private String address;
+    private String phone;
     private String avatarImage;
     private RoleDto role;
 }
