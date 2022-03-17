@@ -32,7 +32,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query(value = "SELECT COUNT (o) FROM OrderDetail o WHERE o.deletedDate IS NULL")
     int countTotalCourseSales();
 
-    @Query(value = "SELECT COUNT(o) FROM OrderDetail o WHERE o.createdDate = :date AND o.deletedDate IS NULL")
+    @Query(value = "SELECT COUNT(*) FROM OrderDetail WHERE convert(Date,created_date) = convert(DATE, :date)",nativeQuery = true)
     int countTotalTodayCourseSales(Date date);
 
     @Query(value = "SELECT o FROM Orders o WHERE o.user.id = :id AND o.orderNumber LIKE :orderNumber")

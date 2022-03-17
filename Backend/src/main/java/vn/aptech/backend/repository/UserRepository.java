@@ -3,6 +3,7 @@ package vn.aptech.backend.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import vn.aptech.backend.dto.UserDto;
 import vn.aptech.backend.entity.AppUser;
 
@@ -28,5 +29,6 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
 
     int countAllByDeletedDateIsNull();
 
+    @Query(value = "select count(*) from AppUser Where convert(Date,created_date) = convert(DATE, :date)", nativeQuery = true)
     int countAllByCreatedDateAndDeletedDateIsNull(Date date);
 }
