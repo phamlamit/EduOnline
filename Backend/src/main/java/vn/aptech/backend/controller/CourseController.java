@@ -38,6 +38,13 @@ public class CourseController implements BaseController {
         return service.fillAll(pageable);
     }
 
+    @GetMapping("/courses/top-seller")
+    public ResponseEntity<Page<CourseDto>> getTopCourse(PageDto page){
+        page = page.builder(page);
+        Pageable pageable = PageRequest.of(page.getPage(), page.getSize(), page.getSort()).withPage(page.getPageNumber());
+        return service.findTopCourse(pageable);
+    }
+
     @Admin
     @GetMapping("/course/filter")
     public ResponseEntity<Page<CourseDto>> filterCourse(String filter, PageDto page){

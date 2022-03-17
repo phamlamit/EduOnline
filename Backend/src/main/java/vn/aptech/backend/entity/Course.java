@@ -52,4 +52,7 @@ public class Course extends BaseEntity {
 
     @OneToMany(mappedBy = "course")
     private List<SavedCourse> savedCourses;
+
+    @OneToMany(mappedBy = "course")
+    private List<OrderDetail> orderDetails;
 }

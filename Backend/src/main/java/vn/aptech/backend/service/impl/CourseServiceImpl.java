@@ -97,6 +97,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public ResponseEntity<Page<CourseDto>> findTopCourse(Pageable pageable) {
+        Page<Course> courses = repository.findTopCourseUser(pageable);
+        Page<CourseDto> courseDtoPage = courses.map(this::convertEntityToDto);
+        return new ResponseHandler<Page<CourseDto>>().sendSuccess(courseDtoPage);
+    }
+
+    @Override
     @SuppressWarnings("Duplicates")
     public ResponseEntity<Page<CourseDto>> fillAll(Pageable pageable) {
         Page<Course> courses = null;
@@ -314,7 +321,7 @@ public class CourseServiceImpl implements CourseService {
         CourseDto courseDto = mapper.map(course, CourseDto.class);
         courseDto.setCatalog(course.getSubCatalog().getCatalog().getName());
         List<Orders> orders = ordersRepository.findOrdersByCourseId(course.getId());
-        courseDto.setTotalSold(orders.size());
+        courseDto.setTotalSold(course.getOrderDetails().size());
         courseDto.setReviews(null);
         courseDto.setLessons(null);
         List<Review> reviews = reviewRepository.findByCourseIdAndDeletedDateIsNull(course.getId());

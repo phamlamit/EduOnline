@@ -31,4 +31,6 @@ public interface CourseService {
     ResponseEntity<Page<CourseDto>> filterCourse(String filter, Pageable pageable);
 
     ResponseEntity<?> createCourseDraft(CourseDraftCreateRequest request);
+
+    ResponseEntity<Page<CourseDto>> findTopCourse(Pageable pageable);
 }
